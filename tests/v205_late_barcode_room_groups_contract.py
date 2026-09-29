@@ -1,0 +1,28 @@
+from pathlib import Path
+import json,re
+ROOT=Path(__file__).resolve().parents[1]
+site=ROOT/'site'; mig=(ROOT/'supabase/migrations/20260923_v20_5_teacher_late_barcode_admin_room_groups.sql').read_text('utf-8')
+js=(site/'v16-platform.js').read_text('utf-8'); app=(site/'app.js').read_text('utf-8'); css=(site/'v20-unified-ui.css').read_text('utf-8'); idx=(site/'index.html').read_text('utf-8'); meta=(site/'release-meta.js').read_text('utf-8'); ver=json.loads((ROOT/'VERSION.json').read_text('utf-8'))
+assert 'data-docnr-release="v20-5-late-teacher-barcode-admin-room-groups"','data-docnr-release="v20-6-adaptive-stability-teacher-room-integration"' in idx
+assert any(x in meta for x in ['RELEASE_VERSION="V20.5"','RELEASE_VERSION="V20.6"','RELEASE_VERSION="V20.7"','RELEASE_VERSION="V21.0"','RELEASE_VERSION="V21.1"','RELEASE_VERSION="V21.2"','RELEASE_VERSION="V21.3"','RELEASE_VERSION="V21.4"','RELEASE_VERSION="V22.0"']) and any(x in meta for x in ['20260923-v20-5','20260924-v20-6','20260924-v20-7','20260924-v21-0','20260925-v21-1','20260925-v21-2','20260925-v21-3','20260929-v21-4','20260929-v22-0'])
+assert float(ver['version'])>=20.5 and ver['release_marker'] in {'V20.5','V20.6','V20.7','V21.0','V21.1','V21.2','V21.3','V21.4','V22.0'}
+for token in [
+ 'late_attendance_tokens','admin_room_groups','admin_room_group_members',
+ 'admin_issue_late_attendance_barcode_v205','my_scan_teacher_late_barcode_v205','scan_attendance_qr_v179',
+ 'admin_upsert_room_group_v205','admin_room_groups_v205','admin_room_group_members_v205','admin_replace_room_group_members_v205','admin_enroll_room_group_subject_v205',
+ 'ATTENDANCE_WINDOW_CLOSED_SCAN_TEACHER_BARCODE','DOCNR-LATE:'
+]: assert token in mig, token
+assert 'v_now>=v_deadline' in mig or 'v_now<v_deadline' in mig
+assert "status='late'" in mig
+assert "private.action_idempotency" in mig
+assert "private.is_admin" in mig and "private.can_learn" in mig
+assert 'my_scan_teacher_late_barcode_v205' in js
+assert 'admin_issue_late_attendance_barcode_v205' in js
+assert 'scan_attendance_qr_v179' in js
+assert 'roomgroups:renderAdminRoomGroupsV205' in js
+assert 'data-v205-group-roster' in js and 'data-v205-member-check' in js
+assert 'admin_enroll_room_group_subject_v205' in js
+assert '"roomgroups","จัดกลุ่มห้อง"' in app
+assert 'roomgroups:"students"' in app
+assert '.v205-late-code' in css and '.v205-roster-row' in css
+print('V20.5 LATE TEACHER BARCODE + ADMIN ROOM GROUPS STATIC CONTRACT PASS')

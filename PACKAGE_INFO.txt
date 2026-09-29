@@ -1,0 +1,12 @@
+DOC-FULL-NR V23.0.0
+Release: Desktop/Tablet New Production Console
+Deploy: GitHub Pages / site/
+Runtime files: site/index.html, site/styles.css, site/app.js
+Mobile runtime: REMOVED
+Camera runtime: REMOVED
+Service worker/PWA registration: REMOVED
+Production backend: Supabase thjscmfqunlaqxlievna
+Backend migrations applied: v22_0_fix_classroom_teacher_rls_dependency, v23_0_staff_worksheet_workspace
+Fixed GitHub repo: pisite2543nac-netizen/NR_____DOC_____009.github.io
+One-click entry: 00_INSTALL_UPDATE_SYSTEM.cmd
+Production Pages: https://pisite2543nac-netizen.github.io/NR_____DOC_____009.github.io/

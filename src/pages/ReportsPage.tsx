@@ -1,0 +1,13 @@
+import {useEffect,useState} from 'react';
+import {api} from '../services/api';
+import {ErrorPanel} from '../components/ErrorPanel';
+import {csvDownload} from '../lib/utils';
+export function ReportsPage(){
+ const[subjects,setSubjects]=useState<any[]>([]);const[subjectId,setSubjectId]=useState('');const[data,setData]=useState<any>(null);const[err,setErr]=useState('');
+ async function init(){try{let s:any[];try{s=(await api.examDashboard()).subjects||[]}catch{s=await api.subjects()}setSubjects(s);if(s[0])setSubjectId(s[0].id)}catch(e:any){setErr(e.message||String(e))}}
+ useEffect(()=>{void init()},[]);
+ async function load(id:string){if(!id)return;setErr('');setData(null);try{setData(await api.gradebook(id))}catch(e:any){setErr(e.message||String(e))}}
+ useEffect(()=>{void load(subjectId)},[subjectId]);
+ function exportCsv(){if(!data?.rows)return;csvDownload([['รหัส','ชื่อ','คะแนนงาน','พฤติกรรม','กลางภาค','ปลายภาค','รวม','เกรด'],...data.rows.map((r:any)=>[r.student_code,r.full_name,r.work_score,r.behavior_score,r.midterm_score,r.final_score,r.total_score,r.grade])],`gradebook-${Date.now()}.csv`)}
+ return <><div className="page-head"><div><div className="eyebrow">GRADEBOOK</div><h1>คะแนนและรายงาน</h1><p>Gradebook รายวิชาและส่งออก CSV</p></div><div className="row"><label className="inline-select">รายวิชา<select value={subjectId} onChange={e=>setSubjectId(e.target.value)}>{subjects.map(s=><option value={s.id} key={s.id}>{s.code} {s.name}</option>)}</select></label><button className="btn success" onClick={exportCsv} disabled={!data?.rows?.length}>Export CSV</button></div></div>{err&&<ErrorPanel message={err}/>} {data&&<><div className="stat-grid small-metrics"><div className="metric"><span>นักศึกษา</span><strong>{data.rows?.length||0}</strong></div><div className="metric"><span>คะแนนงาน</span><strong>{data.settings?.work_points??'-'}</strong></div><div className="metric"><span>พฤติกรรม</span><strong>{data.settings?.behavior_points??'-'}</strong></div><div className="metric"><span>กลางภาค</span><strong>{data.settings?.midterm_points??'-'}</strong></div><div className="metric"><span>ปลายภาค</span><strong>{data.settings?.final_points??'-'}</strong></div></div><div className="data-card"><table><thead><tr><th>รหัส</th><th>ชื่อ</th><th>งาน</th><th>พฤติกรรม</th><th>กลางภาค</th><th>ปลายภาค</th><th>รวม</th><th>เกรด</th></tr></thead><tbody>{(data.rows||[]).map((r:any)=><tr key={r.user_id}><td>{r.student_code||'-'}</td><td><b>{r.full_name}</b></td><td>{r.work_score??0}</td><td>{r.behavior_score??0}</td><td>{r.midterm_score??0}</td><td>{r.final_score??0}</td><td><b>{r.total_score??0}</b></td><td><span className="code-pill">{r.grade||'-'}</span></td></tr>)}</tbody></table></div></>}</>
+}
