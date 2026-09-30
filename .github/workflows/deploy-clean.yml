@@ -1,0 +1,76 @@
+name: Deploy DOC-FULL-NR CLEAN V1.1
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: doc-full-nr-clean-pages
+  cancel-in-progress: true
+
+jobs:
+  validate-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate CLEAN V1.1 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f site/index.html
+          test -f site/styles.css
+          test -f site/app.js
+          test -f site/BUILD.json
+          node --check site/app.js
+          grep -q 'CLEAN-V1.1-MOBILE-COMPANION-SEM2-2569' site/BUILD.json
+          grep -q 'clean_attendance_qr_scan' site/app.js
+          grep -q 'clean_mobile_copy_submit' site/app.js
+          grep -q 'clean_my_identity_qr' site/app.js
+          grep -q 'clean_staff_mobile_copy_queue' site/app.js
+          ! grep -R 'serviceWorker.register' site
+          echo 'CLEAN V1.1 runtime validation PASS'
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload clean site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify live build marker
+        shell: bash
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl -fsSL --max-time 10 "${PAGE_URL}BUILD.json?ts=$(date +%s)" | grep -q 'CLEAN-V1.1-MOBILE-COMPANION-SEM2-2569'; then
+              echo 'LIVE BUILD VERIFIED'
+              exit 0
+            fi
+            echo "Waiting for live marker... $i/30"
+            sleep 10
+          done
+          echo 'Live build marker was not detected.' >&2
+          exit 1

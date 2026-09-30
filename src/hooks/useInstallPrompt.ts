@@ -1,2 +1,0 @@
-import {useEffect,useState} from 'react';
-export function useInstallPrompt(){const[prompt,setPrompt]=useState<any>(null);useEffect(()=>{const h=(e:any)=>{e.preventDefault();setPrompt(e)};window.addEventListener('beforeinstallprompt',h);return()=>window.removeEventListener('beforeinstallprompt',h)},[]);return{canInstall:!!prompt,install:async()=>{if(!prompt)return;await prompt.prompt();await prompt.userChoice;setPrompt(null)}}}

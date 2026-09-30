@@ -1,18 +1,23 @@
-DOC-FULL-NR V23 - START HERE
-============================
+DOC-FULL-NR CLEAN V1.1
+======================
 
-รุ่นนี้เปลี่ยน Production UI ใหม่ทั้งหมดสำหรับ Tablet / Computer
-ไม่ใช้ UI เก่า, Mobile Runtime, Camera Runtime หรือ Service Worker เดิม
+ระบบหลัก: Desktop + Tablet
+Mobile Companion: นักศึกษาเท่านั้น
+- สแกน QR เข้าเรียน
+- สแกน QR มาสาย
+- ถ่ายรูปส่งสำเนางานย้อนหลัง
+- QR ประจำตัวนักศึกษา
 
-วิธีอัปเดต GitHub เดิม:
-1) แตก ZIP นี้
-2) ดับเบิลคลิก 00_INSTALL_UPDATE_SYSTEM.cmd
-3) ไม่ต้องกรอก URL ใด ๆ
-4) รอ GitHub Actions ชื่อ "Deploy DOC-FULL-NR V23 Desktop Console" เป็นสีเขียว
-5) เปิดเว็บนี้เท่านั้น:
-   https://pisite2543nac-netizen.github.io/NR_____DOC_____009.github.io/
+ไม่ใช้ Mobile Runtime / PWA / Service Worker จากระบบ V16-V24 เดิม
+Backend ใช้ clean_* และ Private Storage สำหรับภาพงานย้อนหลัง
 
-หมายเหตุสำคัญ:
-- ลิงก์ https://pisite2543nac-netizen.github.io/ เป็นเว็บ root เก่าและไม่ใช่ V23 repository นี้
-- V23 แสดงคำว่า "Production Console • V23 Desktop/Tablet" ที่ส่วนหัวเพื่อยืนยันว่า deploy ถูกชุด
-- โทรศัพท์ถูกตัดออกจาก runtime ตามคำสั่งล่าสุด
+รายวิชา ภาคเรียน 2/2569:
+- 13 รหัสวิชา
+- 14 ภาระสอน/กลุ่ม
+- 47 ชั่วโมง
+
+Production URL:
+https://pisite2543nac-netizen.github.io/NR_____DOC_____009.github.io/
+
+Build marker ที่ถูกต้อง:
+CLEAN-V1.1-MOBILE-COMPANION-SEM2-2569
