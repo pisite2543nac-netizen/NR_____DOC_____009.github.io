@@ -1,19 +1,24 @@
-DOC-FULL-NR FINAL CLEAN V1.3.2 COMPLETE FULL
-Build: CLEAN-V1.3.2-GROUP-DIGITAL-TEACHING-SEM2-2569
-Frontend: Modular Clean Frontend
-Backend: Clean V1.3.2 Production Backend
-Academic year: 2569 / Semester: 2
-Subjects: 13
-Group Codes: 14
-Teaching Units: 221
-Slides: 4420
-Unit Worksheet Templates: 221
-Unit Practice Exam Templates: 221
-Midterm Templates: 13
-Final Templates: 13
-Teaching flow: Subject -> Group Code -> Unit -> Slides -> Digital Worksheet -> Due Date -> Submit
-Mobile: retrospective Paper worksheet copy submission only
-Attendance: disabled
-QR: disabled
-PWA: disabled
-Service Worker: disabled
+DOC-FULL-NR FINAL CLEAN V1.3.3
+Build: CLEAN-V1.3.3-DETAILED-REGISTRATION-SEM2-2569
+Backend: Supabase thjscmfqunlaqxlievna
+
+CORE
+- 13 subjects
+- 14 Group Codes
+- 221 teaching units
+- 4,420 slides
+- 221 unit worksheet templates
+- 221 unit practice exams
+- 13 midterms + 13 finals
+- Digital worksheet after slides, scoped by Group Code
+- Mobile = retrospective Paper copy submission only
+- Attendance / QR runtime disabled
+
+REGISTRATION V1.3.3
+- Detailed self-registration: full name, nickname, student code, birth date, phone, optional email, level, room label, department, major
+- Student code is the login username
+- Optional Registration Code controlled by Admin
+- Pending until Admin review
+- Admin approval confirms actual classroom, seat number, subjects and Group Code for each subject
+- Reject flow stores reason and review history
+- No mandatory camera / QR / PWA

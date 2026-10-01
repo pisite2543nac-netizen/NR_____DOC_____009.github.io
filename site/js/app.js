@@ -1,6 +1,6 @@
 import { CONFIG } from './config.js';
 import { state } from './state.js';
-import { restoreSession, loadProfile, login, registerStudent, logout, rpc } from './api.js';
+import { restoreSession, loadProfile, login, registerStudent, registrationMeta, logout, rpc } from './api.js';
 import { renderLogin, renderRegister, renderShell, renderMobileStaffNotice } from './ui.js';
 import { MENUS, registerPage, navigate, bindHashRouting } from './router.js';
 import { renderMobileShell } from './mobile.js';
@@ -58,11 +58,13 @@ function showLogin() {
   });
 }
 
-function showRegister() {
-  renderRegister({
-    onSubmit: registerStudent,
-    onBack: showLogin,
-  });
+async function showRegister() {
+  try {
+    const meta = await registrationMeta();
+    renderRegister({ meta, onSubmit: registerStudent, onBack: showLogin });
+  } catch (error) {
+    renderRegister({ meta: { enabled: false, load_error: String(error?.message || error) }, onSubmit: registerStudent, onBack: showLogin });
+  }
 }
 
 async function onLogout() {

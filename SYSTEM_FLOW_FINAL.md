@@ -1,4 +1,4 @@
-# DOC-FULL-NR FINAL CLEAN V1.3.2 — System Flow
+# DOC-FULL-NR FINAL CLEAN V1.3.3 — System Flow
 
 ## Architecture
 Browser → Clean Login/Auth → Role/Profile → clean_* RPC → RLS → clean_* Database
@@ -66,3 +66,19 @@ Paper → ถ่าย 1–6 รูป → Private Storage → ครูรั�
 
 ## Gradebook
 Backend authoritative: Worksheet + Behavior + Midterm + Final → Total → Grade
+
+
+## V1.3.3 — Detailed Registration
+
+ระบบลงทะเบียนนำรายละเอียดที่มีประโยชน์จากระบบเดิมกลับมา โดยไม่เอา Camera/QR/PWA กลับมา:
+- ชื่อ-สกุล / ชื่อเล่น
+- รหัสนักศึกษา (ใช้เป็น Username)
+- วันเกิด
+- เบอร์โทรศัพท์
+- Email (ไม่บังคับ)
+- ระดับ / ห้องที่แจ้ง / แผนก / สาขา
+- Password + Confirm Password
+- Registration Code (เปิด/ปิดและตั้งค่าได้โดย Admin)
+
+Flow: Student Register -> Pending -> Admin ดูรายละเอียด -> ยืนยันห้องจริง/เลขที่ -> เลือกรายวิชา + Group Code รายวิชา -> Approve.
+หากไม่อนุมัติ ระบบเก็บเหตุผลและประวัติการตรวจไว้. ข้อมูลห้อง/กลุ่มที่ผู้สมัครกรอกไม่มีผลกับการสั่งจ่ายงานจนกว่า Admin จะยืนยัน.

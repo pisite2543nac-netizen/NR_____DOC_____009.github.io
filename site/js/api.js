@@ -3,6 +3,19 @@ import { state, resetState } from './state.js';
 
 const ERROR_MESSAGES = Object.freeze({
   AUTH_REQUIRED: 'กรุณาเข้าสู่ระบบใหม่',
+  REGISTRATION_DISABLED: 'ขณะนี้ปิดรับการลงทะเบียนใหม่',
+  REGISTRATION_CODE_REQUIRED: 'กรุณากรอกรหัสลงทะเบียน',
+  INVALID_REGISTRATION_CODE: 'รหัสลงทะเบียนไม่ถูกต้อง',
+  REGISTRATION_CODE_MIN_6: 'รหัสลงทะเบียนต้องมีอย่างน้อย 6 ตัวอักษร',
+  NICKNAME_REQUIRED: 'กรุณากรอกชื่อเล่น',
+  INVALID_BIRTH_DATE: 'วันเกิดไม่ถูกต้อง',
+  EDUCATION_PROFILE_REQUIRED: 'กรุณากรอกข้อมูลระดับ ห้อง แผนก และสาขาให้ครบ',
+  INVALID_PHONE: 'เบอร์โทรศัพท์ไม่ถูกต้อง ใช้รูปแบบ 0xxxxxxxxx',
+  PHONE_EXISTS: 'เบอร์โทรศัพท์นี้ถูกใช้ลงทะเบียนแล้ว',
+  STUDENT_CODE_EXISTS: 'รหัสนักศึกษานี้ถูกใช้แล้ว',
+  GROUP_CODE_REQUIRED: 'รายวิชานี้มีหลาย Group Code กรุณาเลือกกลุ่มเรียน',
+  REJECTION_REASON_REQUIRED: 'กรุณาระบุเหตุผลที่ไม่อนุมัติ',
+
   ADMIN_REQUIRED: 'เมนูนี้ใช้ได้เฉพาะผู้ดูแลระบบ',
   STAFF_REQUIRED: 'เมนูนี้ใช้ได้เฉพาะครูหรือผู้ดูแลระบบ',
   TEACHER_SCOPE_REQUIRED: 'คุณยังไม่ได้รับมอบหมายให้จัดการรายวิชานี้',
@@ -117,6 +130,17 @@ export async function login(identifier, password) {
   if (!response.ok) throw new Error(data.error || 'เข้าสู่ระบบไม่สำเร็จ');
   setSession(data.session);
   state.profile = data.profile;
+  return data;
+}
+
+export async function registrationMeta() {
+  const response = await fetch(`${CONFIG.supabaseUrl}/functions/v1/clean-registration-meta`, {
+    method: 'GET',
+    headers: { apikey: CONFIG.publishableKey },
+    cache: 'no-store',
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'โหลดข้อมูลลงทะเบียนไม่สำเร็จ');
   return data;
 }
 
