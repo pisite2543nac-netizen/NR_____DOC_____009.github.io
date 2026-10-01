@@ -12,7 +12,6 @@ export async function profilePage() {
   if (p.registration_photo_path) {
     try { photoUrl = await getRegistrationPhotoUrl(p.id); } catch {}
   }
-  const pct = (v) => v === null || v === undefined ? '-' : `${Number(v).toFixed(2)}%`;
   setMain(pageHead('โปรไฟล์นักศึกษา', 'ข้อมูลส่วนตัว ห้องเรียน รายวิชา Group Code และภาพรวมการเรียน') + `
     <section class="panel">
       <div class="student-profile-hero">
@@ -32,14 +31,13 @@ export async function profilePage() {
     <div class="section-title"><div><span class="eyebrow">Enrollment</span><h2>รายวิชาและ Group Code</h2></div><span class="count-badge">${enrollments.length} รายวิชา</span></div>
     ${enrollments.length ? `<div class="table-wrap"><table><thead><tr><th>รายวิชา</th><th>Group Code</th><th>ห้อง</th><th>สถานะ</th></tr></thead><tbody>${enrollments.map((e) => `<tr><td><strong>${esc(e.subject_code || '')}</strong><small>${esc(e.subject_name || '')}</small></td><td><strong>${esc(e.group_code || '-')}</strong><small>${e.weekly_hours ?? '-'} ชม./สัปดาห์</small></td><td>${esc(e.classroom_name || '-')}</td><td>${statusPill(e.status)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีรายวิชา</div>'}
 
-    <div class="section-title"><div><span class="eyebrow">Learning Summary</span><h2>ภาพรวมการเรียน</h2></div></div>
+    <div class="section-title"><div><span class="eyebrow">Submission Tracker</span><h2>สถานะการส่งใบงาน</h2></div><span class="count-badge">ไม่แสดงคะแนน</span></div>
     <div class="student-summary-grid">
       <div class="metric-card"><span>ใบงานที่ได้รับ</span><strong>${summary.worksheet_assigned ?? 0}</strong></div>
-      <div class="metric-card"><span>ใบงานที่ส่ง</span><strong>${summary.worksheet_submitted ?? 0}</strong></div>
-      <div class="metric-card"><span>เฉลี่ยใบงาน</span><strong>${pct(summary.worksheet_average_percent)}</strong></div>
-      <div class="metric-card"><span>ข้อสอบที่ได้รับ</span><strong>${summary.exam_assigned ?? 0}</strong></div>
-      <div class="metric-card"><span>ข้อสอบที่ทำแล้ว</span><strong>${summary.exam_attempted ?? 0}</strong></div>
-      <div class="metric-card"><span>เฉลี่ยข้อสอบ</span><strong>${pct(summary.exam_average_percent)}</strong></div>
+      <div class="metric-card"><span>ส่งแล้ว</span><strong>${summary.worksheet_submitted ?? 0}</strong></div>
+      <div class="metric-card"><span>บันทึกร่าง</span><strong>${summary.worksheet_draft ?? 0}</strong></div>
+      <div class="metric-card"><span>ยังไม่ส่ง</span><strong>${summary.worksheet_not_submitted ?? 0}</strong></div>
     </div>
+    <div class="notice-card" style="margin-top:12px"><strong>ข้อมูลคะแนน</strong><p>บัญชีนักศึกษาใช้ตรวจสถานะการส่งงานเท่านั้น คะแนนและ Gradebook แสดงเฉพาะครูผู้สอนและผู้ดูแลระบบ</p></div>
     ${arr(data.history).length ? `<div class="section-title"><div><span class="eyebrow">History</span><h2>ประวัติบัญชี</h2></div></div><div class="profile-history">${arr(data.history).map((h) => `<div><span>${fmt(h.created_at)}</span><strong>${esc(h.action || '-')}</strong><small>${esc(h.actor_name || h.actor_username || 'ระบบ')}</small></div>`).join('')}</div>` : ''}`);
 }

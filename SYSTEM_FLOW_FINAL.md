@@ -1,4 +1,4 @@
-# System Flow — CLEAN V1.3.4
+# System Flow — CLEAN V1.3.5
 
 ## Registration
 Register details → Live camera photo → Pending → Admin profile review → Confirm classroom/seat → Select subjects + Group Codes → Approve → Login enabled
@@ -14,3 +14,12 @@ Paper Worksheet → Teacher enables retrospective window → Student phone takes
 
 ## Removed runtimes
 Attendance, Attendance QR, Late QR, Identity QR, PWA and Service Worker remain disabled.
+
+
+## V1.3.5 Student Submission Tracker
+- Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
+- Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
+- โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
+- หลังส่งข้อสอบไม่แสดงคะแนน แม้ Backend ตรวจอัตโนมัติ
+- คะแนนยังคงอยู่ใน Teacher/Admin Gradebook ตามเดิม
+- Registration layout hardened สำหรับ checkbox/ปุ่มบนจอ 1366/1600/มือถือ

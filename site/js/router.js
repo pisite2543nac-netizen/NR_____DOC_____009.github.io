@@ -13,7 +13,7 @@ export const MENUS = Object.freeze({
   ],
   student: [
     ['dashboard', 'แดชบอร์ด'], ['subjects', 'วิชาของฉัน'], ['teaching', 'เนื้อหาการเรียน'], ['worksheets', 'ใบงาน'],
-    ['exams', 'ข้อสอบ'], ['grades', 'คะแนน'], ['profile', 'โปรไฟล์'],
+    ['exams', 'ข้อสอบ'], ['profile', 'โปรไฟล์'],
   ],
 });
 

@@ -1,4 +1,4 @@
-# คู่มือ DOC-FULL-NR CLEAN V1.3.4
+# คู่มือ DOC-FULL-NR CLEAN V1.3.5
 
 ## การลงทะเบียนนักศึกษา
 1. หน้า Login เลือก `ลงทะเบียนนักศึกษา`
@@ -25,3 +25,12 @@
 
 ## Mobile
 โทรศัพท์ยังมีเพียง `ส่งสำเนาใบงานย้อนหลัง` สำหรับ Paper Worksheet ที่ครูเปิดรับ ไม่เปิด Attendance, QR, PWA หรือ Service Worker
+
+
+## V1.3.5 Student Submission Tracker
+- Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
+- Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
+- โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
+- หลังส่งข้อสอบไม่แสดงคะแนน แม้ Backend ตรวจอัตโนมัติ
+- คะแนนยังคงอยู่ใน Teacher/Admin Gradebook ตามเดิม
+- Registration layout hardened สำหรับ checkbox/ปุ่มบนจอ 1366/1600/มือถือ

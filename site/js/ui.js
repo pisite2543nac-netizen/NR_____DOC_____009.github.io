@@ -50,7 +50,7 @@ export function statusPill(status) {
   const labels = {
     approved: 'อนุมัติแล้ว', pending: 'รออนุมัติ', rejected: 'ไม่อนุมัติ', active: 'ใช้งาน', inactive: 'ปิดใช้งาน',
     published: 'เผยแพร่', draft: 'ฉบับร่าง', closed: 'ปิดงาน', graded: 'ให้คะแนนแล้ว', submitted: 'ส่งแล้ว',
-    needs_review: 'รอตรวจ', accepted: 'รับงาน', paper: 'กระดาษ', digital: 'ดิจิทัล', student: 'นักศึกษา', teacher: 'ครู', admin: 'ผู้ดูแล',
+    needs_review: 'รอตรวจ', accepted: 'รับงาน', checked: 'ตรวจแล้ว', not_submitted: 'ยังไม่ส่ง', overdue_not_submitted: 'เกินกำหนด • ยังไม่ส่ง', paper: 'กระดาษ', digital: 'ดิจิทัล', student: 'นักศึกษา', teacher: 'ครู', admin: 'ผู้ดูแล',
   };
   return `<span class="pill ${cls}">${esc(labels[raw] || raw)}</span>`;
 }

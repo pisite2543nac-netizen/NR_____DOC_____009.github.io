@@ -4,21 +4,26 @@ import { pageHead, setMain, statusPill, arr, esc } from '../ui.js';
 
 export async function dashboardPage() {
   if (state.profile.role === 'student') {
-    const [subjects, worksheets, exams, grades] = await Promise.all([
-      rpc('clean_my_subjects'), rpc('clean_my_worksheets'), rpc('clean_my_exams'), rpc('clean_my_grades'),
+    const [subjects, overview] = await Promise.all([
+      rpc('clean_my_subjects'), rpc('clean_my_submission_overview'),
     ]);
-    const pendingWorks = arr(worksheets).filter((x) => !['submitted', 'graded'].includes(x.submission_status));
-    setMain(pageHead('แดชบอร์ดนักศึกษา', 'สรุปงาน การเรียน และคะแนนของคุณ') + `
-      <div class="metric-grid">
+    const items = arr(overview?.items);
+    const label = (status) => ({
+      submitted: 'ส่งแล้ว', checked: 'ตรวจแล้ว', draft: 'บันทึกร่าง',
+      not_submitted: 'ยังไม่ส่ง', overdue_not_submitted: 'เกินกำหนด • ยังไม่ส่ง',
+    }[status] || status || 'ยังไม่ส่ง');
+    const pillClass = (status) => ['submitted','checked'].includes(status) ? 'ok' : status === 'draft' ? 'warn' : status === 'overdue_not_submitted' ? 'bad' : 'info';
+    setMain(pageHead('ติดตามการส่งใบงาน', 'ดูเฉพาะว่าใบงานใดส่งแล้วหรือยังไม่ส่ง โดยไม่แสดงคะแนน') + `
+      <div class="metric-grid compact">
         <div class="metric-card"><span>รายวิชา</span><strong>${arr(subjects).length}</strong><small>ภาคเรียน 2/2569</small></div>
-        <div class="metric-card"><span>ใบงานทั้งหมด</span><strong>${arr(worksheets).length}</strong><small>ค้าง ${pendingWorks.length} รายการ</small></div>
-        <div class="metric-card"><span>ข้อสอบ</span><strong>${arr(exams).length}</strong><small>รายการที่ได้รับมอบหมาย</small></div>
-        <div class="metric-card"><span>ผลการเรียน</span><strong>${arr(grades).length}</strong><small>รายวิชาที่มีคะแนน</small></div>
+        <div class="metric-card"><span>ใบงานทั้งหมด</span><strong>${overview?.total ?? items.length}</strong><small>รายการที่ได้รับมอบหมาย</small></div>
+        <div class="metric-card"><span>ส่งแล้ว</span><strong>${overview?.submitted ?? 0}</strong><small>รวมงานที่ตรวจแล้ว</small></div>
+        <div class="metric-card"><span>ยังไม่ส่ง</span><strong>${overview?.not_submitted ?? 0}</strong><small>เกินกำหนด ${overview?.overdue_not_submitted ?? 0}</small></div>
       </div>
-      <div class="content-grid two" style="margin-top:18px">
-        <section class="panel"><div class="panel-head"><h3>งานที่ต้องทำ</h3></div>${pendingWorks.length ? `<div class="list">${pendingWorks.slice(0,8).map((w) => `<div class="list-row"><div><strong>${esc(w.title)}</strong><small>${esc(w.subject_code || '')} • กำหนด ${w.due_at ? new Date(w.due_at).toLocaleDateString('th-TH') : '-'}</small></div>${statusPill(w.mode)}</div>`).join('')}</div>` : '<div class="empty-state">ไม่มีงานค้าง</div>'}</section>
-        <section class="panel"><div class="panel-head"><h3>คะแนนล่าสุด</h3></div>${arr(grades).length ? `<div class="table-wrap"><table><thead><tr><th>วิชา</th><th>รวม</th><th>เกรด</th></tr></thead><tbody>${arr(grades).slice(0,8).map((g) => `<tr><td>${esc(g.code)} ${esc(g.name)}</td><td>${g.total_score ?? '-'}</td><td><strong>${g.grade ?? '-'}</strong></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีคะแนน</div>'}</section>
-      </div>`);
+      <section class="panel" style="margin-top:18px">
+        <div class="panel-head"><div><h3>สถานะใบงานของฉัน</h3><small>ไม่มีการแสดงคะแนนในบัญชีนักศึกษา</small></div></div>
+        ${items.length ? `<div class="table-wrap"><table><thead><tr><th>ใบงาน</th><th>วิชา / Group</th><th>กำหนดส่ง</th><th>สถานะ</th></tr></thead><tbody>${items.map((w) => `<tr><td><strong>${esc(w.title || '')}</strong><small>${esc(w.mode || '')}</small></td><td>${esc(w.subject_code || '')}<small>${esc(w.subject_name || '')}${w.group_code ? ` • ${esc(w.group_code)}` : ''}</small></td><td>${w.due_at ? new Date(w.due_at).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</td><td><span class="pill ${pillClass(w.status)}">${esc(label(w.status))}</span></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีใบงานที่ได้รับมอบหมาย</div>'}
+      </section>`);
     return;
   }
 

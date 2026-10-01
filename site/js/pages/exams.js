@@ -66,7 +66,7 @@ async function examAttempts(id) {
 
 async function studentExams() {
   const rows = arr(await rpc('clean_my_exams'));
-  setMain(pageHead('ข้อสอบของฉัน', 'ข้อสอบที่ได้รับมอบหมาย') + `<div class="card-grid">${rows.map((e) => `<article class="subject-card"><div class="subject-code">${esc(e.subject_code || '')}</div><h3>${esc(e.title)}</h3><p>${esc(e.exam_type || '')} • ${e.duration_minutes ?? '-'} นาที • เต็ม ${e.full_score ?? '-'}</p><div class="meta-row">${statusPill(e.latest_status || 'ยังไม่เริ่ม')}<span>ใช้ ${e.attempts_used ?? 0}/${e.attempt_limit ?? 1} ครั้ง</span></div><button class="btn primary full" data-start="${e.id}">เริ่ม/ทำต่อ</button></article>`).join('')}</div>`);
+  setMain(pageHead('ข้อสอบของฉัน', 'ข้อสอบที่ได้รับมอบหมาย') + `<div class="card-grid">${rows.map((e) => `<article class="subject-card"><div class="subject-code">${esc(e.subject_code || '')}</div><h3>${esc(e.title)}</h3><p>${esc(e.exam_type || '')} • ${e.duration_minutes ?? '-'} นาที</p><div class="meta-row">${statusPill(e.latest_status || 'ยังไม่เริ่ม')}<span>ใช้ ${e.attempts_used ?? 0}/${e.attempt_limit ?? 1} ครั้ง</span></div><button class="btn primary full" data-start="${e.id}">เริ่ม/ทำต่อ</button></article>`).join('')}</div>`);
   document.querySelectorAll('[data-start]').forEach((b) => b.onclick = () => startExam(b.dataset.start));
 }
 
@@ -76,7 +76,7 @@ async function startExam(id) {
   setMain(pageHead(exam.title || 'ข้อสอบ', `หมดเวลา ${fmt(attempt.expires_at)}`, '<button class="btn light" id="backMyExam">← กลับ</button><button class="btn light" id="saveExam">บันทึก</button><button class="btn primary" id="submitExam">ส่งข้อสอบ</button>') + `<section class="panel" id="examForm">${renderQuestions(exam.questions || [], attempt.answers || {})}</section>`);
   document.querySelector('#backMyExam').onclick = () => navigate('exams');
   document.querySelector('#saveExam').onclick = async () => { await rpc('clean_exam_save_answers', { p_attempt_id: attempt.id, p_answers: collectAnswers(document.querySelector('#examForm')) }); toast('บันทึกคำตอบแล้ว', 'ok'); };
-  document.querySelector('#submitExam').onclick = async () => { if (!confirm('ยืนยันส่งข้อสอบ?')) return; const result = await rpc('clean_exam_submit', { p_attempt_id: attempt.id, p_answers: collectAnswers(document.querySelector('#examForm')) }); toast(`ส่งข้อสอบแล้ว ${result.attempt?.score != null ? `คะแนน ${result.attempt.score}` : 'รอตรวจ'}`, 'ok'); navigate('exams'); };
+  document.querySelector('#submitExam').onclick = async () => { if (!confirm('ยืนยันส่งข้อสอบ?')) return; const result = await rpc('clean_exam_submit', { p_attempt_id: attempt.id, p_answers: collectAnswers(document.querySelector('#examForm')) }); toast('ส่งข้อสอบแล้ว', 'ok'); navigate('exams'); };
 }
 
 function renderQuestions(questions, answers = {}) {
