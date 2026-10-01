@@ -1,11 +1,13 @@
 {
   "product": "DOC-FULL-NR FINAL CLEAN",
-  "version": "1.3.0",
-  "build": "CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569",
+  "version": "1.3.2",
+  "build": "CLEAN-V1.3.2-GROUP-DIGITAL-TEACHING-SEM2-2569",
   "runtime": "modular-desktop-tablet-core-paper-retrospective-mobile",
   "frontend_rebuilt_from_scratch": true,
   "mobile": true,
-  "mobile_scope": ["retrospective_paper_copy_submission"],
+  "mobile_scope": [
+    "retrospective_paper_copy_submission"
+  ],
   "attendance_runtime": false,
   "qr_runtime": false,
   "pwa": false,
@@ -15,5 +17,12 @@
   "slides": 4420,
   "backend": "thjscmfqunlaqxlievna",
   "academic_year": "2569",
-  "semester": "2"
+  "semester": "2",
+  "unit_worksheet_templates": 221,
+  "unit_exam_templates": 221,
+  "midterm_templates": 13,
+  "final_templates": 13,
+  "group_codes": 14,
+  "group_scoped_digital_worksheet": true,
+  "digital_after_slides": true
 }

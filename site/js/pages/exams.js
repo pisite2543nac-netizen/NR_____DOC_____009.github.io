@@ -6,11 +6,33 @@ import { navigate } from '../router.js';
 export async function examsPage() {
   if (state.profile.role === 'student') return studentExams();
   const [scope, rows] = await Promise.all([rpc('clean_staff_scope'), rpc('clean_exam_dashboard')]);
-  setMain(pageHead('ข้อสอบ', 'Practice / Midterm / Final พร้อม Auto Grade สำหรับคำถามแบบเลือกตอบ', '<button class="btn primary" id="newExam">+ สร้างข้อสอบ</button>') + `
-    <div class="table-wrap"><table><thead><tr><th>ข้อสอบ</th><th>วิชา</th><th>ประเภท</th><th>สถานะ</th><th>ช่วงเวลา</th><th>จัดการ</th></tr></thead><tbody>${arr(rows).map((e) => `<tr><td><strong>${esc(e.title)}</strong><small>${esc(e.description || '')}</small></td><td>${esc(e.subject_code || '')} ${esc(e.subject_name || '')}</td><td>${statusPill(e.exam_type)}</td><td>${statusPill(e.status)}</td><td>${fmt(e.open_at)} → ${fmt(e.due_at)}</td><td class="actions-cell">${e.status === 'draft' ? `<button class="btn primary sm" data-publish="${e.id}">Publish</button>` : ''}<button class="btn light sm" data-attempts="${e.id}">Attempts</button></td></tr>`).join('')}</tbody></table></div>`);
+  setMain(pageHead('ข้อสอบ', '221 แบบทดสอบประจำหน่วย + กลางภาค 13 ชุด + ปลายภาค 13 ชุด', '<button class="btn primary" id="newExam">+ สร้างข้อสอบ</button>') + `
+    <div class="toolbar"><input id="examSearch" class="grow" placeholder="ค้นหาข้อสอบ / หน่วย / วิชา"><select id="examSubject"><option value="">ทุกวิชา</option>${options(scope.subjects, 'id', (s) => `${s.code} ${s.name}`)}</select><select id="examType"><option value="">ทุกประเภท</option><option value="practice">practice</option><option value="midterm">midterm</option><option value="final">final</option></select></div><div id="examTable"></div>`);
+  const draw = () => {
+    const q = (document.querySelector('#examSearch').value || '').toLowerCase();
+    const subject = document.querySelector('#examSubject').value;
+    const type = document.querySelector('#examType').value;
+    const filtered = arr(rows).filter((e) => (!subject || e.subject_id === subject) && (!type || e.exam_type === type) && (`${e.title} ${e.subject_code || ''} ${e.subject_name || ''} ${e.unit_title || ''}`.toLowerCase().includes(q)));
+    document.querySelector('#examTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>ข้อสอบ</th><th>วิชา/หน่วย</th><th>ประเภท</th><th>สถานะ</th><th>ช่วงเวลา</th><th>จัดการ</th></tr></thead><tbody>${filtered.map((e) => `<tr><td><strong>${esc(e.title)}</strong><small>${e.is_unit_template ? 'แม่แบบประจำหน่วย • ' : ''}${esc(e.description || '')}</small></td><td>${esc(e.subject_code || '')} ${esc(e.subject_name || '')}<small>${e.unit_no ? `หน่วย ${e.unit_no}: ${esc(e.unit_title || '')}` : '-'}</small></td><td>${statusPill(e.exam_type)}</td><td>${statusPill(e.status)}</td><td>${fmt(e.open_at)} → ${fmt(e.due_at)}</td><td class="actions-cell"><button class="btn light sm" data-detail="${e.id}">รายละเอียด</button>${e.status === 'draft' ? `<button class="btn primary sm" data-publish="${e.id}">Publish</button>` : ''}<button class="btn light sm" data-attempts="${e.id}">Attempts</button></td></tr>`).join('')}</tbody></table></div>`;
+    document.querySelectorAll('[data-detail]').forEach((b) => b.onclick = () => showExamDetailStaff(b.dataset.detail));
+    document.querySelectorAll('[data-publish]').forEach((b) => b.onclick = () => publishExam(b.dataset.publish));
+    document.querySelectorAll('[data-attempts]').forEach((b) => b.onclick = () => examAttempts(b.dataset.attempts));
+  };
   document.querySelector('#newExam').onclick = () => createExamModal(scope);
-  document.querySelectorAll('[data-publish]').forEach((b) => b.onclick = () => publishExam(b.dataset.publish));
-  document.querySelectorAll('[data-attempts]').forEach((b) => b.onclick = () => examAttempts(b.dataset.attempts));
+  document.querySelector('#examSearch').oninput = draw; document.querySelector('#examSubject').onchange = draw; document.querySelector('#examType').onchange = draw; draw();
+  const focus = sessionStorage.getItem('docnr.focus.exam');
+  if (focus) { sessionStorage.removeItem('docnr.focus.exam'); await showExamDetailStaff(focus); }
+}
+
+async function showExamDetailStaff(id) {
+  const data = await rpc('clean_exam_detail_staff', { p_exam_id: id });
+  const e = data.exam || {};
+  setMain(pageHead('รายละเอียดข้อสอบ', e.title || '', '<button class="btn light" id="backExamDetail">← กลับ</button>' + (e.status === 'draft' ? '<button class="btn primary" id="publishFromDetail">Publish</button>' : '') + '<button class="btn light" id="attemptsFromDetail">Attempts</button>') + `
+    <div class="content-grid two"><section class="panel"><div class="detail-grid"><div><span>ประเภท</span><strong>${statusPill(e.exam_type)}</strong></div><div><span>สถานะ</span><strong>${statusPill(e.status)}</strong></div><div><span>เวลา</span><strong>${e.duration_minutes ?? '-'} นาที</strong></div><div><span>คะแนนเต็ม</span><strong>${e.full_score ?? '-'}</strong></div><div><span>เปิด</span><strong>${fmt(e.open_at)}</strong></div><div><span>ปิด</span><strong>${fmt(e.due_at)}</strong></div></div></section><section class="panel"><div class="panel-head"><h3>รายละเอียด</h3></div><p>${esc(e.description || '-')}</p>${e.is_unit_template ? '<div class="notice-card"><strong>แม่แบบประจำหน่วย</strong><p>ตรวจแก้โจทย์ได้ก่อน Publish เมื่อพร้อมจึงกำหนดเวลาและมอบหมายให้นักศึกษา</p></div>' : ''}</section></div>
+    <section class="panel" style="margin-top:18px"><div class="panel-head"><h3>คำถาม ${arr(e.questions).length} ข้อ</h3></div>${renderQuestions(e.questions || [], {})}</section>`);
+  document.querySelector('#backExamDetail').onclick = () => examsPage();
+  document.querySelector('#attemptsFromDetail').onclick = () => examAttempts(id);
+  if (document.querySelector('#publishFromDetail')) document.querySelector('#publishFromDetail').onclick = () => publishExam(id);
 }
 
 function createExamModal(scope) {

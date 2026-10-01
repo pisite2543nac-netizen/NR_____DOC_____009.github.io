@@ -1,34 +1,41 @@
-# FINAL CLEAN V1.3 Test Report
+# FINAL CLEAN V1.3.2 Test Report
 
-## Static Release Gate
-PASS
-- Build marker ถูกต้อง
+## Static Release Gate — PASS
+- Build marker V1.3.2 ถูกต้อง
 - 19 JavaScript modules
-- Syntax check ทุก module PASS
-- ไม่มี clean_attendance runtime reference ใน site
-- ไม่มี identity/public QR runtime reference
-- ไม่มี QR renderer
-- ไม่มี serviceWorker.register
-- มี Mobile Paper Submission, System Acceptance, Teaching Detail, Publish Preview, Student Approval
+- JavaScript syntax PASS
+- ไม่มี Attendance / QR / PWA runtime
+- มี group digital preview/open flow
+- มี Group Code enrollment flow
 
-## Browser Smoke (mocked API, real browser Chromium)
-PASS
-- Admin Desktop navigation PASS (11 menus)
-- Teacher Desktop navigation PASS (9 menus)
-- Student Desktop navigation PASS (7 menus)
-- Admin: รายละเอียดวิชา → 17 หน่วย PASS
-- Admin: Teaching Unit → 20 Slides PASS
-- Admin: Pending Student → Approval modal PASS
-- Student Mobile: มีฟังก์ชันส่งใบงานย้อนหลังเพียงรายการเดียว PASS
+## Browser Smoke — PASS
+- Admin Desktop 11 เมนู
+- Teacher Desktop 9 เมนู
+- Student Desktop 7 เมนู
+- Teaching: เลือก Group Code PASS
+- Unit → 20 Slides PASS
+- Slide 20 → ปุ่ม `จบสไลด์ • เปิดใบงานอิเล็กทรอนิกส์` PASS
+- Digital Worksheet Preview ตาม Group Code PASS
+- Admin → ลงวิชา → Group Code selector PASS
+- Student Mobile มีฟังก์ชันส่งย้อนหลังเพียงรายการเดียว PASS
 
-## Backend Acceptance
-PASS
-- Build marker ตรง FINAL CLEAN V1.3
-- RLS 29/29
-- 13 subjects / 221 units / 4,420 slides
+## Backend Transactional E2E — PASS
+ทดสอบใน transaction แล้ว rollback:
+- Admin ผูก Student → Subject → Group Code `ส.ทส.12`
+- `clean_teaching_digital_preview` พบผู้รับ 1 คน
+- เปิด Digital Worksheet จาก Unit + Group Code
+- Assigned count = 1
+- Worksheet เก็บ `offering_id` และ `teaching_unit_id` ถูกต้อง
+- Student เห็นเฉพาะงาน Group ของตนเอง
+- Student Submit Digital Worksheet สำเร็จ
+
+Result:
+`status=PASS, group_code=ส.ทส.12, preview_count=1, assigned_count=1, student_visible=true, digital_submit=true`
+
+## Backend Acceptance — PASS
+- Group Codes 14
+- 221 Units / 4,420 Slides
+- 221 Unit Worksheets / 221 Unit Exams
+- 13 Midterm / 13 Final
 - anon Clean RPC = 0
-- Private mobile storage
-- Attendance/QR disabled for authenticated users
-
-## Important
-Production website will remain old V1.1 until the user runs 00_FIX_AND_DEPLOY_FINAL_CLEAN_V1_3.cmd and the live BUILD.json marker changes to FINAL CLEAN V1.3.
+- ungrouped approved enrollment = 0 ณ เวลาตรวจล่าสุด

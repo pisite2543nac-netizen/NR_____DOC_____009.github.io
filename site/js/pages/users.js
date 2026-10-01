@@ -6,7 +6,7 @@ let master = null;
 export async function usersPage() {
   master = await rpc('clean_admin_master_data');
   const pending = arr(master.users).filter((u) => u.role === 'student' && u.approval_status === 'pending');
-  setMain(pageHead('ผู้ใช้และการลงทะเบียน', 'อนุมัติบัญชี กำหนดห้อง ลงรายวิชา และจัดการสถานะ', '<button class="btn primary" id="createUser">+ สร้างผู้ใช้</button>') + `
+  setMain(pageHead('ผู้ใช้และการลงทะเบียน', 'อนุมัติบัญชี กำหนดห้อง ลงรายวิชา กำหนด Group Code และจัดการสถานะ', '<button class="btn primary" id="createUser">+ สร้างผู้ใช้</button>') + `
     ${pending.length ? `<div class="alert-banner"><strong>มีนักศึกษารออนุมัติ ${pending.length} คน</strong><span>ควรอนุมัติพร้อมกำหนดห้องและรายวิชาก่อนให้เข้าใช้งาน</span></div>` : ''}
     <div class="toolbar"><input id="userSearch" class="grow" placeholder="ค้นหาชื่อ / รหัส / username"><select id="roleFilter"><option value="">ทุกบทบาท</option><option value="admin">Admin</option><option value="teacher">Teacher</option><option value="student">Student</option></select><select id="approvalFilter"><option value="">ทุกสถานะ</option><option value="pending">รออนุมัติ</option><option value="approved">อนุมัติแล้ว</option><option value="rejected">ไม่อนุมัติ</option></select></div>
     <div id="userTable"></div>`);
@@ -30,7 +30,7 @@ export async function usersPage() {
 function approveStudent(userId) {
   const user = arr(master.users).find((u) => u.id === userId);
   modal({ title: `อนุมัตินักศึกษา • ${user?.full_name || ''}`, wide: true, body: `
-    <div class="notice-card"><strong>Approval Flow</strong><p>อนุมัติบัญชี + กำหนดห้อง + เลือกรายวิชาในครั้งเดียว ระบบจะบันทึก Audit Log</p></div>
+    <div class="notice-card"><strong>Approval Flow</strong><p>อนุมัติบัญชี + กำหนดห้อง + เลือกรายวิชาในครั้งเดียว วิชาที่มี Group Code เดียวจะถูกกำหนดให้อัตโนมัติ ส่วนวิชาที่มีหลาย Group Code ให้กด “ลงวิชา” เพื่อเลือกกลุ่มหลังอนุมัติ</p></div>
     <div class="form-grid"><label class="field"><span>ห้องเรียน</span><select name="classroom" required><option value="">เลือกห้อง</option>${options(master.classrooms, 'id', (c) => `${c.code || ''} ${c.name}`)}</select></label><label class="field"><span>เลขที่</span><input name="seat" type="number" min="1" max="999"></label><label class="field span2"><span>รายวิชาที่ลงทะเบียน</span><select name="subjects" multiple size="12">${options(master.subjects, 'id', (s) => `${s.code} ${s.name}`)}</select><small>กด Ctrl เพื่อเลือกหลายวิชา</small></label></div>`,
     submitLabel: 'อนุมัติและเปิดใช้งาน',
     onSubmit: async (form) => {
@@ -42,17 +42,32 @@ function approveStudent(userId) {
   });
 }
 
-function enrollmentModal(userId) {
+async function enrollmentModal(userId) {
   const user = arr(master.users).find((u) => u.id === userId);
-  modal({ title: `ลงทะเบียนรายวิชา • ${user?.full_name || ''}`, body: `
-    <label class="field"><span>รายวิชา</span><select name="subject">${options(master.subjects, 'id', (s) => `${s.code} ${s.name}`)}</select></label>
+  const current = arr(await rpc('clean_admin_student_enrollments', { p_student_id: userId }));
+  modal({ title: `ลงทะเบียนรายวิชา / Group Code • ${user?.full_name || ''}`, wide: true, body: `
+    ${current.length ? `<div class="table-wrap compact"><table><thead><tr><th>วิชา</th><th>Group Code</th><th>ห้อง</th><th>สถานะ</th></tr></thead><tbody>${current.map((e) => `<tr><td>${esc(e.subject_code)} ${esc(e.subject_name)}</td><td><strong>${esc(e.group_code || 'ยังไม่กำหนด')}</strong></td><td>${esc(e.classroom_name || '-')}</td><td>${statusPill(e.status)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีรายวิชาที่ลงทะเบียน</div>'}
+    <div class="form-grid" style="margin-top:16px"><label class="field"><span>รายวิชา</span><select name="subject" id="enrollSubject">${options(master.subjects, 'id', (s) => `${s.code} ${s.name}`)}</select></label>
+    <label class="field"><span>Group Code</span><select name="offering" id="enrollOffering"></select><small>ใช้ Code นี้แยกกลุ่มสอนและแยกการสั่งจ่ายใบงาน</small></label>
     <label class="field"><span>ห้องเรียน</span><select name="classroom">${options(master.classrooms, 'id', (c) => `${c.code || ''} ${c.name}`)}</select></label>
-    <label class="field"><span>สถานะ</span><select name="status"><option value="approved">approved</option><option value="pending">pending</option><option value="withdrawn">withdrawn</option></select></label>`,
+    <label class="field"><span>สถานะ</span><select name="status"><option value="approved">approved</option><option value="pending">pending</option><option value="withdrawn">withdrawn</option></select></label></div>`,
     onSubmit: async (form) => {
-      await rpc('clean_admin_set_enrollment', { p_student_id: userId, p_subject_id: form.get('subject'), p_classroom_id: form.get('classroom'), p_status: form.get('status') });
-      toast('อัปเดตการลงทะเบียนแล้ว', 'ok');
+      await rpc('clean_admin_set_enrollment_v2', { p_student_id: userId, p_subject_id: form.get('subject'), p_classroom_id: form.get('classroom'), p_offering_id: form.get('offering') || null, p_status: form.get('status') });
+      toast('อัปเดตวิชาและ Group Code แล้ว', 'ok');
+      await usersPage();
     },
   });
+  const subjectSelect = document.querySelector('#enrollSubject');
+  const offeringSelect = document.querySelector('#enrollOffering');
+  const drawGroups = () => {
+    const subject = arr(master.subjects).find((s) => s.id === subjectSelect.value) || {};
+    const groups = arr(subject.offerings);
+    offeringSelect.innerHTML = groups.length
+      ? groups.map((o) => `<option value="${esc(o.id)}">${esc(o.plan_code || 'ไม่ระบุ')} • ${o.weekly_hours ?? 0} ชม./สัปดาห์</option>`).join('')
+      : '<option value="">ไม่มี Group Code</option>';
+  };
+  subjectSelect.onchange = drawGroups;
+  drawGroups();
 }
 
 async function toggleUser(userId, active) {
@@ -63,7 +78,7 @@ async function toggleUser(userId, active) {
 
 function createUserModal() {
   modal({ title: 'สร้างผู้ใช้โดย Admin', wide: true, body: `
-    <div class="form-grid"><label class="field"><span>บทบาท</span><select name="role"><option value="student">student</option><option value="teacher">teacher</option><option value="admin">admin</option></select></label><label class="field"><span>ชื่อ-สกุล</span><input name="full_name" required></label><label class="field"><span>Username</span><input name="username" required></label><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="8" required></label><label class="field"><span>รหัสนักศึกษา</span><input name="student_code"></label><label class="field"><span>Email</span><input name="email" type="email"></label><label class="field"><span>ห้องเรียน</span><select name="classroom"><option value="">-</option>${options(master.classrooms, 'id', (c) => `${c.code || ''} ${c.name}`)}</select></label><label class="field"><span>เลขที่</span><input name="seat" type="number" min="1"></label><label class="field span2"><span>รายวิชา</span><select name="subjects" multiple size="9">${options(master.subjects, 'id', (s) => `${s.code} ${s.name}`)}</select></label></div>`,
+    <div class="form-grid"><label class="field"><span>บทบาท</span><select name="role"><option value="student">student</option><option value="teacher">teacher</option><option value="admin">admin</option></select></label><label class="field"><span>ชื่อ-สกุล</span><input name="full_name" required></label><label class="field"><span>Username</span><input name="username" required></label><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="8" required></label><label class="field"><span>รหัสนักศึกษา</span><input name="student_code"></label><label class="field"><span>Email</span><input name="email" type="email"></label><label class="field"><span>ห้องเรียน</span><select name="classroom"><option value="">-</option>${options(master.classrooms, 'id', (c) => `${c.code || ''} ${c.name}`)}</select></label><label class="field"><span>เลขที่</span><input name="seat" type="number" min="1"></label><label class="field span2"><span>รายวิชา</span><select name="subjects" multiple size="9">${options(master.subjects, 'id', (s) => `${s.code} ${s.name}`)}</select><small>วิชาที่มีหลาย Group Code ให้กำหนดกลุ่มภายหลังจากปุ่ม “ลงวิชา”</small></label></div>`,
     submitLabel: 'สร้างผู้ใช้',
     onSubmit: async (form) => {
       const ids = [...document.querySelector('#modalForm [name="subjects"]').selectedOptions].map((o) => o.value);

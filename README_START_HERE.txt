@@ -1,31 +1,30 @@
-DOC-FULL-NR FINAL CLEAN V1.3
-============================
+DOC-FULL-NR FINAL CLEAN V1.3.2
+Build: CLEAN-V1.3.2-GROUP-DIGITAL-TEACHING-SEM2-2569
 
-Build: CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569
-ภาคเรียน 2/2569
+วิธีติดตั้ง / อัปเดต
+1) แตก ZIP ทั้งหมดก่อน
+2) ดับเบิลคลิก 00_INSTALL_UPDATE_SYSTEM.cmd
+   หรือ 00_FIX_AND_DEPLOY_FINAL_CLEAN_V1_3_2.cmd
+3) รอจนขึ้น:
+   [SUCCESS] FINAL CLEAN V1.3.2 IS LIVE
+   Build: CLEAN-V1.3.2-GROUP-DIGITAL-TEACHING-SEM2-2569
+4) เว็บจะเปิด Production ให้อัตโนมัติ
 
-สิ่งที่ต้องทำ:
-1) แตก ZIP นี้
-2) ดับเบิลคลิก 00_FIX_AND_DEPLOY_FINAL_CLEAN_V1_3.cmd
-3) รอจนขึ้น [SUCCESS] FINAL CLEAN V1.3 IS LIVE
-4) เว็บ Production ต้องแสดง Build: CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569
+จุดสำคัญ V1.3.2
+- รายวิชา 13 วิชา / 221 หน่วย / 4,420 สไลด์
+- 221 ใบงานแม่แบบประจำหน่วย
+- 221 แบบทดสอบประจำหน่วย + กลางภาค 13 + ปลายภาค 13
+- Group Code 14 กลุ่มจากตารางมอบหมายสอน
+- หน้าสอน: เลือกวิชา → Group Code → หน่วย → สไลด์ → จบสไลด์ → เปิดใบงาน Digital
+- ใบงาน Digital จ่ายเฉพาะนักศึกษาที่ Group Code ตรงกัน
+- Admin กำหนด Group Code ให้ Enrollment ได้จาก ผู้ใช้ → ลงวิชา
+- มือถือ: ส่งสำเนาใบงาน Paper ย้อนหลังเท่านั้น
+- Attendance / QR / PWA / Service Worker runtime ไม่มีในระบบใหม่
 
-รอบนี้เป็น Frontend ใหม่แบบ Modular จากศูนย์ ไม่ใช้ app.js V1.1 เดิมเป็นฐาน
-Backend V1.3 ถูกปรับและผ่าน Production Acceptance แล้ว
-
-Runtime ที่ตั้งใจใช้:
-- Desktop/Tablet: ระบบหลักทั้งหมด
-- Student Mobile: ส่งสำเนาใบงาน Paper ย้อนหลังเท่านั้น
-- ไม่มี Attendance
-- ไม่มี QR
-- ไม่มี PWA
-- ไม่มี Service Worker
-
-ไฟล์สำคัญ:
-- 00_FIX_AND_DEPLOY_FINAL_CLEAN_V1_3.cmd : ตัวแก้ + Deploy ระบบเต็ม
-- 01_OPEN_SYSTEM.cmd : เปิด Production
-- SYSTEM_FLOW_FINAL.md : Flow ทั้งระบบ
+ไฟล์หลัก
+- 00_INSTALL_UPDATE_SYSTEM.cmd : ใช้งานง่ายสุด
+- 00_FIX_AND_DEPLOY_FINAL_CLEAN_V1_3_2.cmd : Deploy แบบเต็มพร้อม Release Gate
+- 02_LOCAL_RELEASE_GATE.cmd : ตรวจไฟล์ในเครื่อง
 - USER_GUIDE_FINAL.md : วิธีใช้งาน
+- SYSTEM_FLOW_FINAL.md : Flow ระบบ
 - TEST_REPORT.md : ผลทดสอบ
-- BACKEND_STATUS.md : สถานะ Backend
-- GITHUB_ROOT/ : Source ที่จะขึ้น GitHub

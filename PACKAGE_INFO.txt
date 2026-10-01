@@ -1,14 +1,19 @@
-DOC-FULL-NR FINAL CLEAN V1.3 COMPLETE FULL
-Build: CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569
-Frontend: New modular source, rebuilt from scratch
-Backend: Clean V1.3 production backend
-Academic year: 2569
-Semester: 2
+DOC-FULL-NR FINAL CLEAN V1.3.2 COMPLETE FULL
+Build: CLEAN-V1.3.2-GROUP-DIGITAL-TEACHING-SEM2-2569
+Frontend: Modular Clean Frontend
+Backend: Clean V1.3.2 Production Backend
+Academic year: 2569 / Semester: 2
 Subjects: 13
-Teaching units: 221
+Group Codes: 14
+Teaching Units: 221
 Slides: 4420
-Mobile scope: retrospective Paper worksheet copy submission only
+Unit Worksheet Templates: 221
+Unit Practice Exam Templates: 221
+Midterm Templates: 13
+Final Templates: 13
+Teaching flow: Subject -> Group Code -> Unit -> Slides -> Digital Worksheet -> Due Date -> Submit
+Mobile: retrospective Paper worksheet copy submission only
 Attendance: disabled
 QR: disabled
 PWA: disabled
-Service worker: disabled; new frontend also unregisters legacy registrations/caches on boot
+Service Worker: disabled

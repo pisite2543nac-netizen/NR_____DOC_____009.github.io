@@ -25,6 +25,12 @@ const ERROR_MESSAGES = Object.freeze({
   UNIT_ACCESS_DENIED: 'คุณไม่มีสิทธิ์เข้าถึงหน่วยการสอนนี้',
   EXAM_NOT_FOUND: 'ไม่พบข้อสอบ',
   INVALID_SCHEDULE: 'วันและเวลาเปิด-ปิดไม่ถูกต้อง',
+  OFFERING_REQUIRED: 'กรุณาเลือก Group Code ก่อน',
+  OFFERING_NOT_FOUND: 'ไม่พบ Group Code นี้ในรายวิชา',
+  OFFERING_SUBJECT_MISMATCH: 'Group Code ไม่ตรงกับรายวิชาที่เลือก',
+  GROUP_HAS_NO_STUDENTS: 'Group Code นี้ยังไม่มีนักศึกษาที่ลงทะเบียน',
+  UNIT_TEMPLATE_USE_TEACHING_FLOW: 'แม่แบบใบงานประจำหน่วยต้องเปิดจากหน้าเนื้อหาการสอน',
+  UNIT_WORKSHEET_TEMPLATE_NOT_FOUND: 'ไม่พบแม่แบบใบงานของหน่วยนี้',
   QR_INVALID_OR_EXPIRED: 'QR นี้ไม่ถูกต้องหรือหมดอายุ',
   'permission denied': 'ไม่มีสิทธิ์ใช้งานฟังก์ชันนี้',
 });
