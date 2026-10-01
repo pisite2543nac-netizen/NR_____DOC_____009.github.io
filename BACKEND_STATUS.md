@@ -1,20 +1,35 @@
-# Backend Status — CLEAN V1.3.3
+# DOC-FULL-NR CLEAN V1.3.4 — Backend Status
 
-Build: `CLEAN-V1.3.3-DETAILED-REGISTRATION-SEM2-2569`
+Build: `CLEAN-V1.3.4-REGISTRATION-CAMERA-STUDENT-PROFILE-SEM2-2569`
 
-Verified acceptance:
-- RLS: 30/30 Clean tables
+## Verified production backend
+- Supabase project: `thjscmfqunlaqxlievna`
+- RLS: 30/30 CLEAN tables enabled
 - Subjects: 13
 - Group Codes: 14
-- Teaching units: 221
+- Corrected Group Code: `21910-2018` uses `ทธ.11` (old `พธ.11` removed)
+- Teaching Units: 221
 - Slides: 4,420
-- Unit worksheets: 221
+- Unit worksheet templates: 221
 - Unit practice exams: 221
-- Detailed Registration + Admin Review: PASS
-- Ungrouped approved enrollments: 0
-- Anonymous Clean RPC execute: 0
-- Mobile storage: Private
+- Midterm templates: 13
+- Final templates: 13
 - Attendance runtime: disabled
 - QR runtime: disabled
+- Mobile scope: retrospective Paper copy submission only
 
-Detailed registration backend adds profile fields for birth date, level, room label, department, major, registration/review timestamps and rejection reason. Registration settings support enable/disable and optional hashed Registration Code.
+## Detailed Registration V1.3.4
+Registration stores: full name, nickname, student code, birth date, phone, email, level, room label, department, major, and a live camera photo.
+
+Registration photos are stored in the private bucket `clean-registration-photos` with a 1 MB JPEG limit. Photos are not public. Authorized profile viewing uses a short-lived signed URL.
+
+## Student Profile
+RPC: `clean_student_profile_detail(uuid)`
+- Admin: full student profile + enrollments + Group Code + learning summary + account history
+- Teacher: only students inside teaching scope; personal fields are reduced
+- Student: own full profile
+
+Profile photo URL: Edge Function `clean-registration-photo-url` (JWT required).
+
+## Acceptance
+`clean_system_acceptance()` currently reports PASS for registration camera, private photo storage, student profile detail, Group Code correction, teaching content, assessments, RLS, and disabled Attendance/QR runtime.

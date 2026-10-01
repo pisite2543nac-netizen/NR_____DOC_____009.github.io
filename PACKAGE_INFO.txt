@@ -1,24 +1,15 @@
-DOC-FULL-NR FINAL CLEAN V1.3.3
-Build: CLEAN-V1.3.3-DETAILED-REGISTRATION-SEM2-2569
-Backend: Supabase thjscmfqunlaqxlievna
+DOC-FULL-NR CLEAN V1.3.4 COMPLETE FULL
+Build: CLEAN-V1.3.4-REGISTRATION-CAMERA-STUDENT-PROFILE-SEM2-2569
+Semester: 2/2569
 
-CORE
-- 13 subjects
-- 14 Group Codes
-- 221 teaching units
-- 4,420 slides
-- 221 unit worksheet templates
-- 221 unit practice exams
-- 13 midterms + 13 finals
-- Digital worksheet after slides, scoped by Group Code
-- Mobile = retrospective Paper copy submission only
-- Attendance / QR runtime disabled
-
-REGISTRATION V1.3.3
-- Detailed self-registration: full name, nickname, student code, birth date, phone, optional email, level, room label, department, major
-- Student code is the login username
-- Optional Registration Code controlled by Admin
-- Pending until Admin review
-- Admin approval confirms actual classroom, seat number, subjects and Group Code for each subject
-- Reject flow stores reason and review history
-- No mandatory camera / QR / PWA
+Highlights:
+- Detailed student registration
+- Live camera photo required during registration
+- Private registration photo storage
+- Full Student Profile viewer
+- Correct Group Code: ทธ.11
+- 13 subjects / 221 units / 4,420 slides
+- 221 unit worksheets / 221 unit exams / 13 midterms / 13 finals
+- Group-scoped Digital Worksheet after teaching slides
+- Mobile remains Paper retrospective submission only
+- Attendance / QR / PWA / Service Worker disabled

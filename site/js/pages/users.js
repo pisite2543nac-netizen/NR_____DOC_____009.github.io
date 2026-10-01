@@ -1,5 +1,6 @@
 import { rpc, edge } from '../api.js';
 import { pageHead, setMain, arr, esc, statusPill, modal, options, toast } from '../ui.js';
+import { openStudentProfile } from '../student-profile.js';
 
 let master = null;
 
@@ -16,7 +17,7 @@ export async function usersPage() {
     const approval = document.querySelector('#approvalFilter').value;
     const rows = arr(master.users).filter((u) => (!role || u.role === role) && (!approval || u.approval_status === approval) && `${u.full_name || ''} ${u.display_name || ''} ${u.student_code || ''} ${u.username || ''} ${u.phone || ''}`.toLowerCase().includes(q));
     document.querySelector('#userTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>ผู้ใช้</th><th>ข้อมูลการศึกษา</th><th>ห้องจริง</th><th>สถานะ</th><th>การจัดการ</th></tr></thead><tbody>${rows.map((u) => `<tr><td><strong>${esc(u.full_name)}</strong><small>${esc(u.display_name || '-')} • ${esc(u.student_code || u.username || '')}</small><small>${esc(u.phone || '')}</small></td><td>${u.role === 'student' ? `<strong>${esc(u.grade_level || '-')} ${esc(u.room_label || '')}</strong><small>${esc(u.department || '-')} • ${esc(u.major || '-')}</small>` : '-'}</td><td>${esc(u.classroom_name || '-')}<small>${u.seat_number ? `เลขที่ ${esc(u.seat_number)}` : ''}</small></td><td>${statusPill(u.approval_status)} ${statusPill(u.active ? 'active' : 'inactive')}</td><td class="actions-cell">${u.role === 'student' ? `<button class="btn light sm" data-detail="${u.id}">รายละเอียด</button>` : ''}${u.role === 'student' && u.approval_status === 'pending' ? `<button class="btn primary sm" data-approve="${u.id}">อนุมัติ</button><button class="btn danger sm" data-reject="${u.id}">ไม่อนุมัติ</button>` : ''}${u.role === 'student' && u.approval_status === 'approved' ? `<button class="btn light sm" data-enroll="${u.id}">ลงวิชา</button>` : ''}<button class="btn ${u.active ? 'danger' : 'ok'} sm" data-toggle="${u.id}" data-active="${u.active}">${u.active ? 'ระงับ' : 'เปิดใช้'}</button></td></tr>`).join('')}</tbody></table></div>`;
-    document.querySelectorAll('[data-detail]').forEach((b) => b.onclick = () => studentDetail(b.dataset.detail));
+    document.querySelectorAll('[data-detail]').forEach((b) => b.onclick = () => openStudentProfile(b.dataset.detail));
     document.querySelectorAll('[data-approve]').forEach((b) => b.onclick = () => approveStudent(b.dataset.approve));
     document.querySelectorAll('[data-reject]').forEach((b) => b.onclick = () => rejectStudent(b.dataset.reject));
     document.querySelectorAll('[data-enroll]').forEach((b) => b.onclick = () => enrollmentModal(b.dataset.enroll));
@@ -30,19 +31,6 @@ export async function usersPage() {
   document.querySelector('#registrationSettings').onclick = registrationSettingsModal;
 }
 
-function studentDetail(userId) {
-  const u = arr(master.users).find((x) => x.id === userId) || {};
-  const value = (label, v) => `<div><span>${label}</span><strong>${esc(v || '-')}</strong></div>`;
-  modal({ title: `รายละเอียดนักศึกษา • ${u.full_name || ''}`, wide: true, hideSubmit: true, body: `
-    <div class="registration-detail-grid">
-      ${value('ชื่อ-สกุล', u.full_name)}${value('ชื่อเล่น', u.display_name)}${value('รหัสนักศึกษา', u.student_code)}${value('Username', u.username)}
-      ${value('วันเกิด', u.birth_date)}${value('เบอร์โทร', u.phone)}${value('Email', u.contact_email)}${value('แหล่งลงทะเบียน', u.registration_source === 'self' ? 'สมัครด้วยตนเอง' : (u.registration_source || 'Admin'))}
-      ${value('ระดับที่แจ้ง', u.grade_level)}${value('ห้องที่แจ้ง', u.room_label)}${value('แผนก', u.department)}${value('สาขา', u.major)}
-      ${value('ห้องจริงในระบบ', u.classroom_name)}${value('เลขที่', u.seat_number)}${value('ขออนุมัติเมื่อ', u.approval_requested_at ? new Date(u.approval_requested_at).toLocaleString('th-TH') : '-')}${value('ตรวจเมื่อ', u.reviewed_at ? new Date(u.reviewed_at).toLocaleString('th-TH') : '-')}
-    </div>
-    ${u.rejection_reason ? `<div class="error-inline"><strong>เหตุผลไม่อนุมัติ:</strong> ${esc(u.rejection_reason)}</div>` : ''}
-    <div class="notice-card"><strong>หลักการของ CLEAN</strong><p>ข้อมูลที่นักศึกษากรอกใช้ประกอบการตรวจสอบเท่านั้น ห้องเรียนจริง รายวิชา และ Group Code มีผลเมื่อ Admin ยืนยัน</p></div>` });
-}
 
 function suggestedClassroom(user) {
   return arr(master.classrooms).find((c) =>

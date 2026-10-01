@@ -15,6 +15,10 @@ const ERROR_MESSAGES = Object.freeze({
   STUDENT_CODE_EXISTS: 'รหัสนักศึกษานี้ถูกใช้แล้ว',
   GROUP_CODE_REQUIRED: 'รายวิชานี้มีหลาย Group Code กรุณาเลือกกลุ่มเรียน',
   REJECTION_REASON_REQUIRED: 'กรุณาระบุเหตุผลที่ไม่อนุมัติ',
+  REGISTRATION_PHOTO_REQUIRED: 'กรุณาเปิดกล้องและถ่ายรูปก่อนส่งคำขอลงทะเบียน',
+  REGISTRATION_PHOTO_NOT_FOUND: 'ไม่พบรูปสมัครของนักศึกษา',
+  STUDENT_PROFILE_ACCESS_DENIED: 'คุณไม่มีสิทธิ์ดูโปรไฟล์นักศึกษาคนนี้',
+  STUDENT_NOT_FOUND: 'ไม่พบข้อมูลนักศึกษาคนนี้',
 
   ADMIN_REQUIRED: 'เมนูนี้ใช้ได้เฉพาะผู้ดูแลระบบ',
   STAFF_REQUIRED: 'เมนูนี้ใช้ได้เฉพาะครูหรือผู้ดูแลระบบ',
@@ -223,5 +227,10 @@ async function compressMobileImage(file) {
 
 export async function getMobileFileUrl(path) {
   const data = await edge('clean-mobile-file-url', { path });
+  return data.url;
+}
+
+export async function getRegistrationPhotoUrl(userId) {
+  const data = await edge('clean-registration-photo-url', { user_id: userId });
   return data.url;
 }

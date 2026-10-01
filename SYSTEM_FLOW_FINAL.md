@@ -1,84 +1,16 @@
-# DOC-FULL-NR FINAL CLEAN V1.3.3 — System Flow
+# System Flow — CLEAN V1.3.4
 
-## Architecture
-Browser → Clean Login/Auth → Role/Profile → clean_* RPC → RLS → clean_* Database
+## Registration
+Register details → Live camera photo → Pending → Admin profile review → Confirm classroom/seat → Select subjects + Group Codes → Approve → Login enabled
 
-Frontend แยกเป็น modules และไม่มี Attendance / QR / PWA runtime.
+## Student Profile
+Student list / Submission queue / Room group → Student Profile → Photo + personal/academic data + classroom + subjects/Group Codes + worksheet/exam summary + audit history (where authorized)
 
-## Registration + Group Code
-นักศึกษา → ลงทะเบียน → pending → Admin อนุมัติ → กำหนดห้อง/วิชา → approved
-
-การแยกกลุ่มสอนใช้ `clean_subject_offerings.plan_code` เช่น `ส.ทส.12`, `ส.ทส.21`, `ส.ทส.22`.
-
-- วิชาที่มี Group Code เดียว: ระบบกำหนดให้ Enrollment อัตโนมัติ
-- วิชาที่มีหลาย Group Code: Admin ไปที่ **ผู้ใช้ → ลงวิชา** แล้วเลือก Group Code ให้ผู้เรียน
-- `clean_subject_enrollments.offering_id` เป็นตัวผูกนักศึกษากับ Group Code จริง
-
-## Teaching Flow
-`รายวิชา → Group Code → หน่วย 1–17 → 20 สไลด์ → จบสไลด์ → เปิดใบงานอิเล็กทรอนิกส์`
-
-ครูเลือก Group Code ก่อนเริ่มสอน เมื่อถึงสไลด์ที่ 20 ปุ่มถัดไปเปลี่ยนเป็น **จบสไลด์ • เปิดใบงานอิเล็กทรอนิกส์**.
-
-ระบบแสดง Preview:
-- รายวิชา
-- หน่วย
-- Group Code
-- จำนวนนักศึกษาที่จะได้รับงาน
-- รายชื่อนักศึกษา
-- จำนวนข้อ
-- เวลาเปิด
-- เวลาส่ง
-
-เมื่อยืนยัน Backend สร้าง Digital Worksheet จากแม่แบบของหน่วย และ Assign เฉพาะ Enrollment ที่ `offering_id` ตรงกับ Group Code.
-
-## Unit Content
-13 วิชา × 17 หน่วย = 221 หน่วย
-221 × 20 slides = 4,420 สไลด์
-
-แต่ละหน่วยมี:
-- ผลลัพธ์การเรียนรู้
-- Key Concepts
-- กรณีศึกษา
-- งานปฏิบัติ
-- Common Mistakes / Troubleshooting
-- Safety / Ethics
-- ใบงานแม่แบบ
-- แบบทดสอบประจำหน่วย
-
-## Worksheets
-### Unit Digital Worksheet
-แม่แบบประจำหน่วยเป็น Draft/Template และไม่ Publish ตรงจากหน้ารวมใบงาน
-ต้องเปิดจากหน้า **เนื้อหาการสอน** เพื่อให้ผูก Group Code ถูกต้อง
-
-### General Worksheet
-ครูยังสร้าง Digital/Paper Worksheet ทั่วไปได้จากเมนูใบงาน
-
-### Student Digital Flow
-Publish → นักศึกษาเห็นงาน → ทำในระบบ → Save Draft → Submit → ครูตรวจ → Gradebook
+## Teaching
+Subject → Group Code → Teaching Unit → 20 Slides → Digital Worksheet release → Open/Due time → Group-only assignment → Submission → Review → Gradebook
 
 ## Paper Retrospective Mobile
-มือถือใช้เฉพาะใบงาน Paper ที่ครูเปิดรับย้อนหลัง:
-Paper → ถ่าย 1–6 รูป → Private Storage → ครูรับ/ไม่รับ → ถ้ารับเข้าสู่ Submission Queue
+Paper Worksheet → Teacher enables retrospective window → Student phone takes 1–6 copy images → Private Storage → Teacher accepts/rejects → Accepted item becomes normal Submission
 
-## Exams
-221 Practice templates + 13 Midterm + 13 Final
-นักศึกษาเห็นเฉพาะข้อสอบที่ Publish และถูก Assign ให้ตนเอง
-
-## Gradebook
-Backend authoritative: Worksheet + Behavior + Midterm + Final → Total → Grade
-
-
-## V1.3.3 — Detailed Registration
-
-ระบบลงทะเบียนนำรายละเอียดที่มีประโยชน์จากระบบเดิมกลับมา โดยไม่เอา Camera/QR/PWA กลับมา:
-- ชื่อ-สกุล / ชื่อเล่น
-- รหัสนักศึกษา (ใช้เป็น Username)
-- วันเกิด
-- เบอร์โทรศัพท์
-- Email (ไม่บังคับ)
-- ระดับ / ห้องที่แจ้ง / แผนก / สาขา
-- Password + Confirm Password
-- Registration Code (เปิด/ปิดและตั้งค่าได้โดย Admin)
-
-Flow: Student Register -> Pending -> Admin ดูรายละเอียด -> ยืนยันห้องจริง/เลขที่ -> เลือกรายวิชา + Group Code รายวิชา -> Approve.
-หากไม่อนุมัติ ระบบเก็บเหตุผลและประวัติการตรวจไว้. ข้อมูลห้อง/กลุ่มที่ผู้สมัครกรอกไม่มีผลกับการสั่งจ่ายงานจนกว่า Admin จะยืนยัน.
+## Removed runtimes
+Attendance, Attendance QR, Late QR, Identity QR, PWA and Service Worker remain disabled.

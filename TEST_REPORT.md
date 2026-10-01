@@ -1,22 +1,45 @@
-# TEST REPORT — CLEAN V1.3.3
+# CLEAN V1.3.4 Test Report
 
-## Backend
-- `clean_system_acceptance()` => PASS
-- RLS 30/30 => PASS
-- `clean_admin_approve_student_v2` transactional smoke => PASS
-- Group Code enrollment during approval => PASS
-- `clean_admin_reject_student` with stored reason => PASS
-- `clean_admin_registration_settings` => PASS
-- `clean-registration-meta` Edge Function => ACTIVE
-- `clean-register-student` v2 => ACTIVE
+## Backend Acceptance
+PASS
+- RLS 30/30
+- Subjects 13
+- Group Codes 14
+- `ทธ.11` correction PASS
+- Units 221
+- Slides 4,420
+- Unit worksheets 221
+- Unit exams 221
+- Registration camera/private photo storage PASS
+- Student profile detail PASS
+- Anon CLEAN RPC = 0
+- Attendance disabled
+- QR disabled
 
-## Frontend
-- JavaScript syntax: PASS
-- Release Gate: PASS
-- Detailed registration form fields: PASS
-- Admin desktop navigation: PASS
-- Teacher desktop navigation: PASS
-- Student desktop navigation: PASS
-- Student mobile single-function scope: PASS
+## Student Profile RPC
+PASS
+- profile object returned
+- enrollment array returned
+- learning summary returned
+- account history returned for Admin
+- RPC authenticated=true / anon=false
 
-Production is not considered updated until the One-Click Deploy script reports the live BUILD marker.
+## Browser Smoke
+PASS
+- Detailed registration form
+- Camera controls present
+- Admin navigation
+- Admin student profile dialog
+- Teacher navigation
+- Student navigation/profile
+- Group-scoped teaching flow
+- Student mobile remains single-purpose
+
+## Frontend Gate
+PASS
+- Modular frontend
+- JavaScript syntax/import smoke
+- no Attendance runtime reference
+- no QR runtime reference
+- student profile flow present
+- registration camera flow present

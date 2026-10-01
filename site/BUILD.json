@@ -1,7 +1,7 @@
 {
   "product": "DOC-FULL-NR FINAL CLEAN",
-  "version": "1.3.3",
-  "build": "CLEAN-V1.3.3-DETAILED-REGISTRATION-SEM2-2569",
+  "version": "1.3.4",
+  "build": "CLEAN-V1.3.4-REGISTRATION-CAMERA-STUDENT-PROFILE-SEM2-2569",
   "runtime": "modular-desktop-tablet-core-paper-retrospective-mobile",
   "frontend_rebuilt_from_scratch": true,
   "mobile": true,
@@ -36,8 +36,13 @@
     "grade_level",
     "room_label",
     "department",
-    "major"
+    "major",
+    "camera_photo"
   ],
   "registration_admin_review": true,
-  "registration_code_control": true
+  "registration_code_control": true,
+  "registration_camera": true,
+  "registration_photo_private": true,
+  "student_profile_detail": true,
+  "group_code_correction": "ทธ.11"
 }

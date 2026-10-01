@@ -1,5 +1,6 @@
 import { rpc, getMobileFileUrl } from '../api.js';
 import { pageHead, setMain, arr, esc, statusPill, modal, toast, fmt } from '../ui.js';
+import { openStudentProfile } from '../student-profile.js';
 
 export async function submissionsPage() {
   const [digital, mobile] = await Promise.all([rpc('clean_staff_submission_queue'), rpc('clean_staff_mobile_copy_queue')]);
@@ -8,12 +9,14 @@ export async function submissionsPage() {
     <div class="tabbar"><button class="tab active" data-tab="digital">Digital (${digitalRows.length})</button><button class="tab" data-tab="mobile">ย้อนหลังมือถือ (${mobileRows.length})</button></div>
     <div id="submissionBody"></div>`);
   const drawDigital = () => {
-    document.querySelector('#submissionBody').innerHTML = digitalRows.length ? `<div class="table-wrap"><table><thead><tr><th>นักศึกษา</th><th>วิชา</th><th>ใบงาน</th><th>สถานะ</th><th>ส่งเมื่อ</th><th></th></tr></thead><tbody>${digitalRows.map((r) => `<tr><td>${esc(r.student_code || '')} ${esc(r.full_name || '')}</td><td>${esc(r.subject_code || '')}</td><td>${esc(r.worksheet_title || r.title || '')}</td><td>${statusPill(r.submission_status || r.status)}</td><td>${fmt(r.submitted_at)}</td><td><button class="btn primary sm" data-review="${r.id || r.submission_id}">ตรวจ</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีงาน Digital รอตรวจ</div>';
+    document.querySelector('#submissionBody').innerHTML = digitalRows.length ? `<div class="table-wrap"><table><thead><tr><th>นักศึกษา</th><th>วิชา</th><th>ใบงาน</th><th>สถานะ</th><th>ส่งเมื่อ</th><th></th></tr></thead><tbody>${digitalRows.map((r) => `<tr><td><strong>${esc(r.student_code || '')} ${esc(r.full_name || '')}</strong><small><button class="link-btn" data-student-profile="${r.student_id}">ดูโปรไฟล์</button></small></td><td>${esc(r.subject_code || '')}</td><td>${esc(r.worksheet_title || r.title || '')}</td><td>${statusPill(r.submission_status || r.status)}</td><td>${fmt(r.submitted_at)}</td><td><button class="btn primary sm" data-review="${r.id || r.submission_id}">ตรวจ</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีงาน Digital รอตรวจ</div>';
     document.querySelectorAll('[data-review]').forEach((b) => b.onclick = () => reviewDigital(b.dataset.review));
+    document.querySelectorAll('[data-student-profile]').forEach((b) => b.onclick = () => openStudentProfile(b.dataset.studentProfile));
   };
   const drawMobile = () => {
-    document.querySelector('#submissionBody').innerHTML = mobileRows.length ? `<div class="table-wrap"><table><thead><tr><th>นักศึกษา</th><th>วิชา</th><th>ใบงาน</th><th>ครั้ง</th><th>สถานะ</th><th>ส่งเมื่อ</th><th></th></tr></thead><tbody>${mobileRows.map((r) => `<tr><td>${esc(r.student_code || '')} ${esc(r.full_name || '')}</td><td>${esc(r.subject_code || '')}</td><td>${esc(r.worksheet_title || '')}</td><td>${r.attempt_no ?? '-'}</td><td>${statusPill(r.status)}</td><td>${fmt(r.submitted_at)}</td><td><button class="btn light sm" data-mobile-review="${r.id}">ดูภาพ/ตรวจรับ</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีสำเนางานย้อนหลัง</div>';
+    document.querySelector('#submissionBody').innerHTML = mobileRows.length ? `<div class="table-wrap"><table><thead><tr><th>นักศึกษา</th><th>วิชา</th><th>ใบงาน</th><th>ครั้ง</th><th>สถานะ</th><th>ส่งเมื่อ</th><th></th></tr></thead><tbody>${mobileRows.map((r) => `<tr><td><strong>${esc(r.student_code || '')} ${esc(r.full_name || '')}</strong><small><button class="link-btn" data-student-profile="${r.student_id}">ดูโปรไฟล์</button></small></td><td>${esc(r.subject_code || '')}</td><td>${esc(r.worksheet_title || '')}</td><td>${r.attempt_no ?? '-'}</td><td>${statusPill(r.status)}</td><td>${fmt(r.submitted_at)}</td><td><button class="btn light sm" data-mobile-review="${r.id}">ดูภาพ/ตรวจรับ</button></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีสำเนางานย้อนหลัง</div>';
     document.querySelectorAll('[data-mobile-review]').forEach((b) => b.onclick = () => reviewMobile(mobileRows.find((r) => r.id === b.dataset.mobileReview)));
+    document.querySelectorAll('[data-student-profile]').forEach((b) => b.onclick = () => openStudentProfile(b.dataset.studentProfile));
   };
   drawDigital();
   document.querySelectorAll('[data-tab]').forEach((button) => button.onclick = () => {

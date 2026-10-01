@@ -136,8 +136,111 @@ export function renderRegister({ meta = {}, onSubmit, onBack }) {
   document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div><div id="modalRoot"></div>`;
   const opt = (items) => arr(items).map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
   const enabled = meta.enabled !== false;
-  $('#app').innerHTML = `<div class="auth-shell register-shell"><section class="auth-hero register"><span class="hero-chip">Student Registration • Semester ${esc(meta.semester || CONFIG.semester)}/${esc(meta.academic_year || CONFIG.academicYear)}</span><h1>ลงทะเบียนนักศึกษา</h1><p>กรอกข้อมูลส่วนตัวและข้อมูลการศึกษาให้ครบ ระบบจะส่งคำขอไปยัง Admin เพื่อตรวจสอบห้อง เลขที่ รายวิชา และ Group Code ก่อนเปิดใช้งาน</p><div class="hero-features"><span>✓ ตรวจข้อมูลก่อนอนุมัติ</span><span>✓ แยกห้อง/สาขา</span><span>✓ ผูก Group Code ภายหลัง</span></div></section><section class="auth-panel register-panel"><form class="auth-card register-card" id="registerForm"><div class="row-between"><div><div class="eyebrow">Detailed Registration</div><h2>ข้อมูลลงทะเบียน</h2></div><span class="pill ${enabled ? 'ok' : 'bad'}">${enabled ? 'เปิดรับสมัคร' : 'ปิดรับสมัคร'}</span></div>${meta.load_error ? `<div class="error-inline">${esc(meta.load_error)}</div>` : ''}${!enabled ? '<div class="error-inline">ขณะนี้ผู้ดูแลระบบปิดรับการลงทะเบียนใหม่</div>' : ''}<div class="registration-section"><h3>1. ข้อมูลประจำตัว</h3><div class="form-grid"><label class="field"><span>ชื่อ-สกุล</span><input name="full_name" maxlength="160" required></label><label class="field"><span>ชื่อเล่น</span><input name="nickname" maxlength="60" required></label><label class="field"><span>รหัสนักศึกษา</span><input name="student_code" inputmode="numeric" pattern="[0-9]{5,15}" required><small>ใช้เป็น Username สำหรับเข้าสู่ระบบ</small></label><label class="field"><span>วันเกิด</span><input name="birth_date" type="date" required></label><label class="field"><span>เบอร์โทรศัพท์</span><input name="phone" inputmode="tel" placeholder="08xxxxxxxx" required></label><label class="field"><span>Email (ถ้ามี)</span><input name="email" type="email"></label></div></div><div class="registration-section"><h3>2. ข้อมูลการศึกษา</h3><div class="form-grid"><label class="field"><span>ระดับ</span><select name="grade_level" required><option value="">เลือกระดับ</option>${opt(meta.grade_levels)}</select></label><label class="field"><span>ห้อง</span><select name="room_label" required><option value="">เลือกห้อง</option>${opt(meta.room_labels)}</select></label><label class="field"><span>แผนก</span><select name="department" required><option value="">เลือกแผนก</option>${opt(meta.departments)}</select></label><label class="field"><span>สาขา</span><select name="major" required><option value="">เลือกสาขา</option>${opt(meta.majors)}</select></label></div><div class="notice-card"><strong>หมายเหตุ</strong><p>ข้อมูลระดับ/ห้อง/แผนก/สาขาที่กรอกเป็นข้อมูลประกอบการสมัคร Admin จะเป็นผู้ยืนยันห้องเรียนจริง รายวิชา และ Group Code อีกครั้งก่อนอนุมัติ</p></div></div><div class="registration-section"><h3>3. ความปลอดภัยบัญชี</h3><div class="form-grid"><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="8" autocomplete="new-password" required></label><label class="field"><span>ยืนยันรหัสผ่าน</span><input name="password_confirm" type="password" minlength="8" autocomplete="new-password" required></label>${meta.code_required ? '<label class="field span2"><span>Registration Code</span><input name="registration_code" minlength="6" required><small>รับรหัสจากครูหรือผู้ดูแลระบบ</small></label>' : ''}</div></div><label class="check-card registration-confirm"><input type="checkbox" name="confirm_accuracy" required><span><b>ยืนยันข้อมูล</b><small>ข้าพเจ้ายืนยันว่าข้อมูลที่กรอกถูกต้องและยินยอมให้ผู้ดูแลระบบใช้เพื่อจัดห้อง รายวิชา และ Group Code</small></span></label><button class="btn primary full" type="submit" ${enabled ? '' : 'disabled'}>ส่งคำขอลงทะเบียน</button><button class="btn light full" id="backLogin" type="button">กลับเข้าสู่ระบบ</button><div id="registerResult"></div></form></section></div>`;
-  $('#backLogin').onclick = onBack;
+  const photoRequired = meta.photo_required !== false;
+  let cameraStream = null;
+  let photoDataUrl = '';
+
+  $('#app').innerHTML = `<div class="auth-shell register-shell"><section class="auth-hero register"><span class="hero-chip">Student Registration • Semester ${esc(meta.semester || CONFIG.semester)}/${esc(meta.academic_year || CONFIG.academicYear)}</span><h1>ลงทะเบียนนักศึกษา</h1><p>กรอกข้อมูลส่วนตัว ถ่ายรูปสมัคร และระบุข้อมูลการศึกษาให้ครบ ระบบจะส่งคำขอไปยัง Admin เพื่อตรวจสอบห้อง เลขที่ รายวิชา และ Group Code ก่อนเปิดใช้งาน</p><div class="hero-features"><span>✓ ถ่ายรูปผู้สมัครจากกล้อง</span><span>✓ ตรวจข้อมูลก่อนอนุมัติ</span><span>✓ แยกห้อง/สาขา</span><span>✓ ผูก Group Code ภายหลัง</span></div></section><section class="auth-panel register-panel"><form class="auth-card register-card" id="registerForm"><div class="row-between"><div><div class="eyebrow">Detailed Registration</div><h2>ข้อมูลลงทะเบียน</h2></div><span class="pill ${enabled ? 'ok' : 'bad'}">${enabled ? 'เปิดรับสมัคร' : 'ปิดรับสมัคร'}</span></div>${meta.load_error ? `<div class="error-inline">${esc(meta.load_error)}</div>` : ''}${!enabled ? '<div class="error-inline">ขณะนี้ผู้ดูแลระบบปิดรับการลงทะเบียนใหม่</div>' : ''}
+
+    <div class="registration-section"><h3>1. ข้อมูลประจำตัว</h3><div class="form-grid"><label class="field"><span>ชื่อ-สกุล</span><input name="full_name" maxlength="160" required></label><label class="field"><span>ชื่อเล่น</span><input name="nickname" maxlength="60" required></label><label class="field"><span>รหัสนักศึกษา</span><input name="student_code" inputmode="numeric" pattern="[0-9]{5,15}" required><small>ใช้เป็น Username สำหรับเข้าสู่ระบบ</small></label><label class="field"><span>วันเกิด</span><input name="birth_date" type="date" required></label><label class="field"><span>เบอร์โทรศัพท์</span><input name="phone" inputmode="tel" placeholder="08xxxxxxxx" required></label><label class="field"><span>Email (ถ้ามี)</span><input name="email" type="email"></label></div></div>
+
+    <div class="registration-section"><h3>2. รูปถ่ายผู้สมัคร</h3><div class="registration-camera"><div class="camera-frame"><div class="camera-placeholder" id="cameraPlaceholder"><div>📷</div><strong>ยังไม่ได้เปิดกล้อง</strong><small>จัดใบหน้าให้อยู่กึ่งกลาง มองตรง และมีแสงเพียงพอ</small></div><video id="registrationVideo" autoplay muted playsinline hidden></video><img id="registrationPreview" alt="ตัวอย่างรูปสมัคร" hidden><canvas id="registrationCanvas" hidden></canvas></div><div class="camera-actions"><button class="btn primary" id="startRegistrationCamera" type="button">เปิดกล้อง</button><button class="btn ok" id="captureRegistrationPhoto" type="button" hidden>ถ่ายรูป</button><button class="btn light" id="retakeRegistrationPhoto" type="button" hidden>ถ่ายใหม่</button></div><div id="cameraStatus" class="camera-status">${photoRequired ? 'ต้องถ่ายรูปก่อนส่งคำขอลงทะเบียน' : 'รูปถ่ายไม่บังคับ'}</div></div></div>
+
+    <div class="registration-section"><h3>3. ข้อมูลการศึกษา</h3><div class="form-grid"><label class="field"><span>ระดับ</span><select name="grade_level" required><option value="">เลือกระดับ</option>${opt(meta.grade_levels)}</select></label><label class="field"><span>ห้อง</span><select name="room_label" required><option value="">เลือกห้อง</option>${opt(meta.room_labels)}</select></label><label class="field"><span>แผนก</span><select name="department" required><option value="">เลือกแผนก</option>${opt(meta.departments)}</select></label><label class="field"><span>สาขา</span><select name="major" required><option value="">เลือกสาขา</option>${opt(meta.majors)}</select></label></div><div class="notice-card"><strong>หมายเหตุ</strong><p>ข้อมูลระดับ/ห้อง/แผนก/สาขาที่กรอกเป็นข้อมูลประกอบการสมัคร Admin จะเป็นผู้ยืนยันห้องเรียนจริง รายวิชา และ Group Code อีกครั้งก่อนอนุมัติ</p></div></div>
+
+    <div class="registration-section"><h3>4. ความปลอดภัยบัญชี</h3><div class="form-grid"><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="8" autocomplete="new-password" required></label><label class="field"><span>ยืนยันรหัสผ่าน</span><input name="password_confirm" type="password" minlength="8" autocomplete="new-password" required></label>${meta.code_required ? '<label class="field span2"><span>Registration Code</span><input name="registration_code" minlength="6" required><small>รับรหัสจากครูหรือผู้ดูแลระบบ</small></label>' : ''}</div></div>
+
+    <label class="check-card registration-confirm"><input type="checkbox" name="confirm_accuracy" required><span><b>ยืนยันข้อมูล</b><small>ข้าพเจ้ายืนยันว่าข้อมูลและรูปถ่ายเป็นของตนเองและถูกต้อง และยินยอมให้ผู้ดูแลระบบใช้เพื่อจัดห้อง รายวิชา และ Group Code</small></span></label><button class="btn primary full" type="submit" ${enabled ? '' : 'disabled'}>ส่งคำขอลงทะเบียน</button><button class="btn light full" id="backLogin" type="button">กลับเข้าสู่ระบบ</button><div id="registerResult"></div></form></section></div>`;
+
+  const video = $('#registrationVideo');
+  const preview = $('#registrationPreview');
+  const placeholder = $('#cameraPlaceholder');
+  const startButton = $('#startRegistrationCamera');
+  const captureButton = $('#captureRegistrationPhoto');
+  const retakeButton = $('#retakeRegistrationPhoto');
+  const cameraStatus = $('#cameraStatus');
+
+  const stopCamera = () => {
+    if (cameraStream) cameraStream.getTracks().forEach((track) => track.stop());
+    cameraStream = null;
+    if (video) video.srcObject = null;
+  };
+
+  const resetCameraUi = () => {
+    stopCamera();
+    photoDataUrl = '';
+    preview.hidden = true;
+    preview.removeAttribute('src');
+    video.hidden = true;
+    placeholder.hidden = false;
+    startButton.hidden = false;
+    captureButton.hidden = true;
+    retakeButton.hidden = true;
+    cameraStatus.textContent = photoRequired ? 'ต้องถ่ายรูปก่อนส่งคำขอลงทะเบียน' : 'รูปถ่ายไม่บังคับ';
+    cameraStatus.className = 'camera-status';
+  };
+
+  const startCamera = async () => {
+    stopCamera();
+    if (!navigator.mediaDevices?.getUserMedia) {
+      cameraStatus.textContent = 'อุปกรณ์หรือเบราว์เซอร์นี้ไม่รองรับการเปิดกล้อง';
+      cameraStatus.className = 'camera-status bad';
+      return;
+    }
+    try {
+      cameraStatus.textContent = 'กำลังขอสิทธิ์ใช้งานกล้อง...';
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } }, audio: false });
+      video.srcObject = cameraStream;
+      await video.play();
+      placeholder.hidden = true;
+      preview.hidden = true;
+      video.hidden = false;
+      startButton.hidden = true;
+      captureButton.hidden = false;
+      retakeButton.hidden = true;
+      cameraStatus.textContent = 'จัดใบหน้าให้อยู่ในกรอบ แล้วกด “ถ่ายรูป”';
+      cameraStatus.className = 'camera-status ok';
+    } catch (error) {
+      cameraStatus.textContent = 'เปิดกล้องไม่ได้ กรุณาอนุญาตสิทธิ์ Camera ในเบราว์เซอร์แล้วลองใหม่';
+      cameraStatus.className = 'camera-status bad';
+    }
+  };
+
+  const capturePhoto = () => {
+    if (!video.videoWidth || !video.videoHeight) return;
+    const canvas = $('#registrationCanvas');
+    const targetW = 600, targetH = 800, targetRatio = targetW / targetH;
+    const sourceRatio = video.videoWidth / video.videoHeight;
+    let sx = 0, sy = 0, sw = video.videoWidth, sh = video.videoHeight;
+    if (sourceRatio > targetRatio) {
+      sw = Math.round(video.videoHeight * targetRatio);
+      sx = Math.round((video.videoWidth - sw) / 2);
+    } else {
+      sh = Math.round(video.videoWidth / targetRatio);
+      sy = Math.round((video.videoHeight - sh) / 2);
+    }
+    canvas.width = targetW; canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
+    photoDataUrl = canvas.toDataURL('image/jpeg', 0.78);
+    if (photoDataUrl.length > 1_350_000) photoDataUrl = canvas.toDataURL('image/jpeg', 0.68);
+    preview.src = photoDataUrl;
+    preview.hidden = false;
+    video.hidden = true;
+    placeholder.hidden = true;
+    captureButton.hidden = true;
+    retakeButton.hidden = false;
+    startButton.hidden = true;
+    stopCamera();
+    cameraStatus.textContent = 'ถ่ายรูปแล้ว ✓ หากไม่พอใจสามารถกด “ถ่ายใหม่”';
+    cameraStatus.className = 'camera-status ok';
+  };
+
+  startButton.onclick = startCamera;
+  captureButton.onclick = capturePhoto;
+  retakeButton.onclick = async () => { photoDataUrl = ''; await startCamera(); };
+  $('#backLogin').onclick = () => { stopCamera(); onBack(); };
+
   $('#registerForm').onsubmit = async (event) => {
     event.preventDefault();
     const button = event.currentTarget.querySelector('[type="submit"]');
@@ -146,16 +249,22 @@ export function renderRegister({ meta = {}, onSubmit, onBack }) {
       $('#registerResult').innerHTML = '<div class="error-inline">รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน</div>';
       return;
     }
+    if (photoRequired && !photoDataUrl) {
+      $('#registerResult').innerHTML = '<div class="error-inline">กรุณาเปิดกล้องและถ่ายรูปผู้สมัครก่อนส่งคำขอ</div>';
+      document.querySelector('.registration-camera')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     button.disabled = true;
     try {
       const result = await onSubmit({
         full_name: form.get('full_name'), nickname: form.get('nickname'), student_code: form.get('student_code'),
         birth_date: form.get('birth_date'), phone: form.get('phone'), email: form.get('email'),
         grade_level: form.get('grade_level'), room_label: form.get('room_label'), department: form.get('department'), major: form.get('major'),
-        password: form.get('password'), registration_code: form.get('registration_code') || '',
+        password: form.get('password'), registration_code: form.get('registration_code') || '', photo_data_url: photoDataUrl,
       });
       $('#registerResult').innerHTML = `<div class="success-inline">${esc(result.message || 'ลงทะเบียนสำเร็จ รอผู้ดูแลระบบอนุมัติ')}</div>`;
       event.currentTarget.reset();
+      resetCameraUi();
     } catch (error) {
       $('#registerResult').innerHTML = `<div class="error-inline">${esc(friendlyError(error))}</div>`;
     } finally {

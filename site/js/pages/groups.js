@@ -2,6 +2,7 @@ import { rpc } from '../api.js';
 import { state } from '../state.js';
 import { pageHead, setMain, arr, esc, modal, options, toast } from '../ui.js';
 import { navigate } from '../router.js';
+import { openStudentProfile } from '../student-profile.js';
 
 export async function groupsPage() {
   const rows = arr(await rpc('clean_room_groups_list'));
@@ -17,8 +18,9 @@ export async function groupsPage() {
 async function showGroup(id) {
   const [members, scope] = await Promise.all([rpc('clean_room_group_members', { p_group_id: id }), rpc('clean_staff_scope')]);
   const rows = arr(members);
-  setMain(pageHead('รายละเอียดกลุ่มห้อง', 'สมาชิกและรายวิชา', '<button class="btn light" id="backGroups">← กลับ</button>' + (state.profile.role === 'admin' ? '<button class="btn primary" id="manageMembers">จัดสมาชิก</button><button class="btn light" id="bindSubject">ผูกวิชา</button>' : '')) + `<div class="table-wrap"><table><thead><tr><th>เลขที่</th><th>รหัส</th><th>ชื่อ</th></tr></thead><tbody>${rows.map((m) => `<tr><td>${m.seat_number ?? '-'}</td><td>${esc(m.student_code || '')}</td><td>${esc(m.full_name || '')}</td></tr>`).join('')}</tbody></table></div>`);
+  setMain(pageHead('รายละเอียดกลุ่มห้อง', 'สมาชิกและรายวิชา', '<button class="btn light" id="backGroups">← กลับ</button>' + (state.profile.role === 'admin' ? '<button class="btn primary" id="manageMembers">จัดสมาชิก</button><button class="btn light" id="bindSubject">ผูกวิชา</button>' : '')) + `<div class="table-wrap"><table><thead><tr><th>เลขที่</th><th>รหัส</th><th>ชื่อ</th><th></th></tr></thead><tbody>${rows.map((m) => `<tr><td>${m.seat_number ?? '-'}</td><td>${esc(m.student_code || '')}</td><td>${esc(m.full_name || '')}</td><td><button class="btn light sm" data-student-profile="${m.student_id}">โปรไฟล์</button></td></tr>`).join('')}</tbody></table></div>`);
   document.querySelector('#backGroups').onclick = () => navigate('groups');
+  document.querySelectorAll('[data-student-profile]').forEach((b) => b.onclick = () => openStudentProfile(b.dataset.studentProfile));
   if (state.profile.role !== 'admin') return;
   const master = await rpc('clean_admin_master_data');
   document.querySelector('#manageMembers').onclick = () => {
