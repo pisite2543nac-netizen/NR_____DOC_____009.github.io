@@ -1,0 +1,14 @@
+DOC-FULL-NR FINAL CLEAN V1.3 COMPLETE FULL
+Build: CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569
+Frontend: New modular source, rebuilt from scratch
+Backend: Clean V1.3 production backend
+Academic year: 2569
+Semester: 2
+Subjects: 13
+Teaching units: 221
+Slides: 4420
+Mobile scope: retrospective Paper worksheet copy submission only
+Attendance: disabled
+QR: disabled
+PWA: disabled
+Service worker: disabled; new frontend also unregisters legacy registrations/caches on boot

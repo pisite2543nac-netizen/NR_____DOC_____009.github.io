@@ -1,11 +1,7 @@
-# DOC-FULL-NR CLEAN V1.1
+# DOC-FULL-NR FINAL CLEAN V1.3
 
-Clean rebuild for Desktop/Tablet Core + Student Mobile Companion.
+Production frontend rebuilt from scratch as ES modules.
 
-Mobile Companion is intentionally limited to:
-- QR attendance (Present)
-- QR late attendance
-- Retrospective photo-copy assignment submission
-- Student identity QR
+Build marker: `CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569`
 
-No legacy V16-V24 frontend runtime, no PWA, and no service worker.
+Desktop/Tablet: full academic workflow. Student Mobile: retrospective Paper worksheet submission only. Attendance, QR, PWA and Service Worker runtime are not part of the application.

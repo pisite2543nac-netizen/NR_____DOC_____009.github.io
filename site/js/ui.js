@@ -1,0 +1,200 @@
+import { CONFIG, ROLE_LABEL } from './config.js';
+import { state } from './state.js';
+import { friendlyError } from './api.js';
+
+export const $ = (selector, root = document) => root.querySelector(selector);
+export const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+export const arr = (value) => Array.isArray(value) ? value : [];
+
+export function esc(value = '') {
+  return String(value ?? '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+}
+
+export function fmt(value) {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return esc(value);
+  return date.toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+}
+
+export function dateInput(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return z.toISOString().slice(0, 16);
+}
+
+export function toast(message, type = 'info') {
+  const el = $('#toast');
+  if (!el) return;
+  el.className = `toast show ${type}`;
+  el.textContent = message;
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+export function loading(label = 'กำลังโหลดข้อมูล...') {
+  return `<div class="state-box"><div class="spinner"></div><strong>${esc(label)}</strong></div>`;
+}
+
+export function empty(message = 'ยังไม่มีข้อมูล') {
+  return `<div class="empty-state">${esc(message)}</div>`;
+}
+
+export function statusPill(status) {
+  const raw = String(status || '-');
+  const ok = ['approved', 'active', 'published', 'graded', 'accepted', 'submitted', 'final'].includes(raw);
+  const warn = ['pending', 'draft', 'open', 'needs_review'].includes(raw);
+  const bad = ['rejected', 'inactive', 'suspended', 'failed'].includes(raw);
+  const cls = ok ? 'ok' : warn ? 'warn' : bad ? 'bad' : 'info';
+  const labels = {
+    approved: 'อนุมัติแล้ว', pending: 'รออนุมัติ', rejected: 'ไม่อนุมัติ', active: 'ใช้งาน', inactive: 'ปิดใช้งาน',
+    published: 'เผยแพร่', draft: 'ฉบับร่าง', closed: 'ปิดงาน', graded: 'ให้คะแนนแล้ว', submitted: 'ส่งแล้ว',
+    needs_review: 'รอตรวจ', accepted: 'รับงาน', paper: 'กระดาษ', digital: 'ดิจิทัล', student: 'นักศึกษา', teacher: 'ครู', admin: 'ผู้ดูแล',
+  };
+  return `<span class="pill ${cls}">${esc(labels[raw] || raw)}</span>`;
+}
+
+export function pageHead(title, description = '', actions = '') {
+  return `<div class="page-head"><div><div class="eyebrow">DOC-FULL-NR • ${esc(CONFIG.version)}</div><h1>${esc(title)}</h1>${description ? `<p>${esc(description)}</p>` : ''}</div><div class="page-actions">${actions}</div></div>`;
+}
+
+export function setMain(html) {
+  const main = $('#main');
+  if (main) main.innerHTML = html;
+}
+
+export function showPageError(error, retry) {
+  setMain(`${pageHead('เกิดข้อผิดพลาด', 'ระบบไม่สามารถโหลดหน้านี้ได้')}<div class="error-card"><strong>${esc(friendlyError(error))}</strong><details><summary>รายละเอียดทางเทคนิค</summary><pre>${esc(error?.message || String(error))}</pre></details>${retry ? '<button class="btn primary" id="retryPage">ลองใหม่</button>' : ''}</div>`);
+  if (retry) $('#retryPage').onclick = retry;
+}
+
+export function modal({ title, body, submitLabel = 'บันทึก', onSubmit, wide = false, hideSubmit = false, extraFooter = '' }) {
+  const root = $('#modalRoot');
+  root.innerHTML = `<div class="modal-backdrop"><form class="modal ${wide ? 'wide' : ''}" id="modalForm"><div class="modal-head"><div><span class="eyebrow">DOC-FULL-NR</span><h2>${esc(title)}</h2></div><button class="icon-btn" type="button" data-close aria-label="ปิด">×</button></div><div class="modal-body">${body}<div id="modalError"></div></div><div class="modal-foot">${extraFooter}<button class="btn light" type="button" data-close>ยกเลิก</button>${hideSubmit ? '' : `<button class="btn primary" type="submit">${esc(submitLabel)}</button>`}</div></form></div>`;
+  const close = () => { root.innerHTML = ''; };
+  $$('[data-close]', root).forEach((button) => button.onclick = close);
+  $('#modalForm', root).onsubmit = async (event) => {
+    event.preventDefault();
+    if (!onSubmit) return close();
+    const button = event.currentTarget.querySelector('[type="submit"]');
+    if (button) button.disabled = true;
+    try {
+      const result = await onSubmit(new FormData(event.currentTarget), close);
+      if (result !== false) close();
+    } catch (error) {
+      $('#modalError', root).innerHTML = `<div class="error-inline">${esc(friendlyError(error))}</div>`;
+    } finally {
+      if (button) button.disabled = false;
+    }
+  };
+  return { root, close };
+}
+
+export function options(rows, valueKey = 'id', label = (row) => row.name, selected = '') {
+  return arr(rows).map((row) => `<option value="${esc(row[valueKey])}" ${String(row[valueKey]) === String(selected) ? 'selected' : ''}>${esc(label(row))}</option>`).join('');
+}
+
+export function renderShell(menus, onNavigate, onLogout) {
+  document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div><div id="modalRoot"></div>`;
+  const role = state.profile?.role || 'student';
+  const displayName = state.profile?.display_name || state.profile?.full_name || '';
+  $('#app').innerHTML = `<div class="app-shell"><header class="topbar"><div class="brand"><div class="brand-mark">NR</div><div><strong>DOC-FULL-NR FINAL CLEAN</strong><small>Semester ${CONFIG.semester}/${CONFIG.academicYear} • ${CONFIG.version}</small></div></div><nav id="nav" class="nav">${menus.map(([route, label]) => `<button data-route="${route}">${esc(label)}</button>`).join('')}</nav><div class="userbox"><span class="role-badge">${esc(ROLE_LABEL[role] || role)}</span><span class="user-name">${esc(displayName)}</span><button class="btn light sm" id="logoutBtn">ออก</button></div></header><main id="main" class="main">${loading()}</main><footer class="footer"><span>${esc(CONFIG.build)}</span><span>Desktop / Tablet Core • Mobile: ส่งใบงานย้อนหลังเท่านั้น</span></footer></div>`;
+  $('#nav').onclick = (event) => {
+    const button = event.target.closest('[data-route]');
+    if (button) onNavigate(button.dataset.route);
+  };
+  $('#logoutBtn').onclick = onLogout;
+}
+
+export function markActiveRoute(route) {
+  $$('#nav [data-route]').forEach((button) => button.classList.toggle('active', button.dataset.route === route));
+}
+
+export function renderLogin({ onLogin, onRegister }) {
+  document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div><div id="modalRoot"></div>`;
+  $('#app').innerHTML = `<div class="auth-shell"><section class="auth-hero"><span class="hero-chip">FINAL CLEAN • Semester ${CONFIG.semester}/${CONFIG.academicYear}</span><div class="hero-logo">NR</div><h1>DOC-FULL-NR</h1><h2>ระบบงานการเรียนการสอน</h2><p>Frontend ใหม่ทั้งชุดสำหรับ Desktop/Tablet และ Mobile Companion ที่เหลือเฉพาะการส่งสำเนาใบงานย้อนหลัง</p><div class="hero-features"><span>✓ 13 รายวิชา</span><span>✓ 221 หน่วยการสอน</span><span>✓ 4,420 สไลด์</span><span>✓ Paper / Digital Worksheet</span></div></section><section class="auth-panel"><form class="auth-card" id="loginForm"><div class="eyebrow">เข้าสู่ระบบ</div><h2>ยินดีต้อนรับ</h2><p>ใช้ Username, รหัสนักศึกษา หรือ Email</p><label class="field"><span>บัญชีผู้ใช้</span><input name="identifier" autocomplete="username" required></label><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" autocomplete="current-password" required></label><button class="btn primary full" type="submit">เข้าสู่ระบบ</button><button class="btn light full" id="registerBtn" type="button">ลงทะเบียนนักศึกษา</button><div id="loginError"></div><div class="build-note">Build: ${esc(CONFIG.build)}</div></form></section></div>`;
+  $('#registerBtn').onclick = onRegister;
+  $('#loginForm').onsubmit = async (event) => {
+    event.preventDefault();
+    const button = event.currentTarget.querySelector('[type="submit"]');
+    button.disabled = true;
+    button.textContent = 'กำลังเข้าสู่ระบบ...';
+    $('#loginError').innerHTML = '';
+    try {
+      await onLogin(event.currentTarget.identifier.value, event.currentTarget.password.value);
+    } catch (error) {
+      $('#loginError').innerHTML = `<div class="error-inline">${esc(friendlyError(error))}</div>`;
+    } finally {
+      button.disabled = false;
+      button.textContent = 'เข้าสู่ระบบ';
+    }
+  };
+}
+
+export function renderRegister({ onSubmit, onBack }) {
+  document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div><div id="modalRoot"></div>`;
+  $('#app').innerHTML = `<div class="auth-shell"><section class="auth-hero register"><span class="hero-chip">Student Registration</span><h1>ลงทะเบียนนักศึกษา</h1><p>บัญชีใหม่จะอยู่ในสถานะ “รออนุมัติ” จนกว่า Admin จะกำหนดห้องและรายวิชาให้</p></section><section class="auth-panel"><form class="auth-card" id="registerForm"><h2>ข้อมูลนักศึกษา</h2><label class="field"><span>ชื่อ-สกุล</span><input name="full_name" required></label><label class="field"><span>รหัสนักศึกษา</span><input name="student_code" required></label><label class="field"><span>Username</span><input name="username" required></label><label class="field"><span>Email (ถ้ามี)</span><input name="email" type="email"></label><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="8" required></label><button class="btn primary full" type="submit">ส่งลงทะเบียน</button><button class="btn light full" id="backLogin" type="button">กลับเข้าสู่ระบบ</button><div id="registerResult"></div></form></section></div>`;
+  $('#backLogin').onclick = onBack;
+  $('#registerForm').onsubmit = async (event) => {
+    event.preventDefault();
+    const button = event.currentTarget.querySelector('[type="submit"]');
+    button.disabled = true;
+    const form = new FormData(event.currentTarget);
+    try {
+      const result = await onSubmit({
+        full_name: form.get('full_name'), student_code: form.get('student_code'), username: form.get('username'),
+        email: form.get('email'), password: form.get('password'),
+      });
+      $('#registerResult').innerHTML = `<div class="success-inline">${esc(result.message || 'ลงทะเบียนสำเร็จ รอผู้ดูแลระบบอนุมัติ')}</div>`;
+      event.currentTarget.reset();
+    } catch (error) {
+      $('#registerResult').innerHTML = `<div class="error-inline">${esc(friendlyError(error))}</div>`;
+    } finally {
+      button.disabled = false;
+    }
+  };
+}
+
+export function renderMobileStaffNotice(onLogout) {
+  document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div>`;
+  $('#app').innerHTML = `<div class="mobile-shell"><header class="mobile-header"><div><strong>DOC-FULL-NR</strong><small>Mobile Companion</small></div><button id="mobileLogout" class="btn light sm">ออก</button></header><main class="mobile-main"><div class="mobile-empty"><div class="mobile-emoji">💻</div><h1>กรุณาใช้คอมพิวเตอร์หรือแท็บเล็ต</h1><p>บัญชีครูและผู้ดูแลระบบไม่เปิดเมนูงานหลักบนโทรศัพท์ เพื่อรักษาความเรียบง่ายและความเสถียรของระบบ</p></div></main></div>`;
+  $('#mobileLogout').onclick = onLogout;
+}
+
+export function downloadJson(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = filename; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+}
+
+export function downloadCsv(filename, rows, columns) {
+  const safe = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
+  const csv = '\ufeff' + [columns.join(','), ...arr(rows).map((row) => columns.map((column) => safe(row[column])).join(','))].join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url; link.download = filename; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+}
+
+export function formLines(value) {
+  return arr(value).join('\n');
+}
+
+export function linesJson(text) {
+  return String(text || '').split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+}
+
+export function saveLocalDraft(key, value) {
+  localStorage.setItem(`docnr.draft.${key}`, JSON.stringify({ saved_at: new Date().toISOString(), value }));
+}
+
+export function loadLocalDraft(key) {
+  try { return JSON.parse(localStorage.getItem(`docnr.draft.${key}`) || 'null'); } catch { return null; }
+}
+
+export function clearLocalDraft(key) {
+  localStorage.removeItem(`docnr.draft.${key}`);
+}

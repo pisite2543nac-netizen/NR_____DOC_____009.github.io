@@ -1,4 +1,4 @@
-name: Deploy DOC-FULL-NR CLEAN V1.1
+name: Deploy DOC-FULL-NR FINAL CLEAN V1.3
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: doc-full-nr-clean-pages
+  group: doc-full-nr-final-clean-pages
   cancel-in-progress: true
 
 jobs:
@@ -29,27 +29,33 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Validate CLEAN V1.1 runtime
+      - name: Release gate
         shell: bash
         run: |
           set -euo pipefail
           test -f site/index.html
           test -f site/styles.css
-          test -f site/app.js
           test -f site/BUILD.json
-          node --check site/app.js
-          grep -q 'CLEAN-V1.1-MOBILE-COMPANION-SEM2-2569' site/BUILD.json
-          grep -q 'clean_attendance_qr_scan' site/app.js
-          grep -q 'clean_mobile_copy_submit' site/app.js
-          grep -q 'clean_my_identity_qr' site/app.js
-          grep -q 'clean_staff_mobile_copy_queue' site/app.js
-          ! grep -R 'serviceWorker.register' site
-          echo 'CLEAN V1.1 runtime validation PASS'
+          test -f site/js/app.js
+          test ! -f site/app.js
+          test -d site/js/pages
+          grep -q 'CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569' site/BUILD.json
+          find site/js -name '*.js' -print0 | xargs -0 -n1 node --check
+          ! grep -R "clean_attendance" site
+          ! grep -R "clean_my_identity_qr" site
+          ! grep -R "clean_public_profile_by_qr" site
+          ! grep -R "clean-qr-render" site
+          ! grep -R "serviceWorker.register" site
+          grep -R "clean_mobile_copy_submit" site/js/mobile.js
+          grep -R "clean_system_acceptance" site/js/pages/diagnostics.js
+          grep -R "clean_teaching_unit_detail" site/js/pages/teaching.js
+          grep -R "clean_worksheet_publish_preview" site/js/pages/worksheets.js
+          echo 'FINAL CLEAN V1.3 release gate PASS'
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload clean site
+      - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
@@ -64,12 +70,12 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           set -euo pipefail
-          for i in $(seq 1 30); do
-            if curl -fsSL --max-time 10 "${PAGE_URL}BUILD.json?ts=$(date +%s)" | grep -q 'CLEAN-V1.1-MOBILE-COMPANION-SEM2-2569'; then
+          for i in $(seq 1 45); do
+            if curl -fsSL --max-time 10 "${PAGE_URL}BUILD.json?ts=$(date +%s)" | grep -q 'CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569'; then
               echo 'LIVE BUILD VERIFIED'
               exit 0
             fi
-            echo "Waiting for live marker... $i/30"
+            echo "Waiting for live marker... $i/45"
             sleep 10
           done
           echo 'Live build marker was not detected.' >&2

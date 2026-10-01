@@ -1,23 +1,31 @@
-DOC-FULL-NR CLEAN V1.1
-======================
+DOC-FULL-NR FINAL CLEAN V1.3
+============================
 
-ระบบหลัก: Desktop + Tablet
-Mobile Companion: นักศึกษาเท่านั้น
-- สแกน QR เข้าเรียน
-- สแกน QR มาสาย
-- ถ่ายรูปส่งสำเนางานย้อนหลัง
-- QR ประจำตัวนักศึกษา
+Build: CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569
+ภาคเรียน 2/2569
 
-ไม่ใช้ Mobile Runtime / PWA / Service Worker จากระบบ V16-V24 เดิม
-Backend ใช้ clean_* และ Private Storage สำหรับภาพงานย้อนหลัง
+สิ่งที่ต้องทำ:
+1) แตก ZIP นี้
+2) ดับเบิลคลิก 00_FIX_AND_DEPLOY_FINAL_CLEAN_V1_3.cmd
+3) รอจนขึ้น [SUCCESS] FINAL CLEAN V1.3 IS LIVE
+4) เว็บ Production ต้องแสดง Build: CLEAN-V1.3-FINAL-CLEAN-FRONTEND-SEM2-2569
 
-รายวิชา ภาคเรียน 2/2569:
-- 13 รหัสวิชา
-- 14 ภาระสอน/กลุ่ม
-- 47 ชั่วโมง
+รอบนี้เป็น Frontend ใหม่แบบ Modular จากศูนย์ ไม่ใช้ app.js V1.1 เดิมเป็นฐาน
+Backend V1.3 ถูกปรับและผ่าน Production Acceptance แล้ว
 
-Production URL:
-https://pisite2543nac-netizen.github.io/NR_____DOC_____009.github.io/
+Runtime ที่ตั้งใจใช้:
+- Desktop/Tablet: ระบบหลักทั้งหมด
+- Student Mobile: ส่งสำเนาใบงาน Paper ย้อนหลังเท่านั้น
+- ไม่มี Attendance
+- ไม่มี QR
+- ไม่มี PWA
+- ไม่มี Service Worker
 
-Build marker ที่ถูกต้อง:
-CLEAN-V1.1-MOBILE-COMPANION-SEM2-2569
+ไฟล์สำคัญ:
+- 00_FIX_AND_DEPLOY_FINAL_CLEAN_V1_3.cmd : ตัวแก้ + Deploy ระบบเต็ม
+- 01_OPEN_SYSTEM.cmd : เปิด Production
+- SYSTEM_FLOW_FINAL.md : Flow ทั้งระบบ
+- USER_GUIDE_FINAL.md : วิธีใช้งาน
+- TEST_REPORT.md : ผลทดสอบ
+- BACKEND_STATUS.md : สถานะ Backend
+- GITHUB_ROOT/ : Source ที่จะขึ้น GitHub
