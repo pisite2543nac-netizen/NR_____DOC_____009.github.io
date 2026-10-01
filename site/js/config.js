@@ -1,9 +1,9 @@
 export const CONFIG = Object.freeze({
   supabaseUrl: 'https://thjscmfqunlaqxlievna.supabase.co',
   publishableKey: 'sb_publishable_ZBMlwjpRKAL1egtnj-cqsQ_Etrjh_L_',
-  version: '1.3.5',
-  build: 'CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569',
-  backendBuild: 'CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569',
+  version: '1.3.6',
+  build: 'CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569',
+  backendBuild: 'CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569',
   academicYear: '2569',
   semester: '2',
   phoneBreakpoint: 720,

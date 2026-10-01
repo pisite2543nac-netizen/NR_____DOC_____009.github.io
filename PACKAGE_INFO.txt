@@ -1,5 +1,5 @@
-DOC-FULL-NR CLEAN V1.3.5 COMPLETE FULL
-Build: CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569
+DOC-FULL-NR CLEAN V1.3.6 COMPLETE FULL
+Build: CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569
 Semester: 2/2569
 
 Highlights:
@@ -15,7 +15,7 @@ Highlights:
 - Attendance / QR / PWA / Service Worker disabled
 
 
-## V1.3.5 Student Submission Tracker
+## V1.3.6 Student Submission Tracker
 - Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
 - Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
 - โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย

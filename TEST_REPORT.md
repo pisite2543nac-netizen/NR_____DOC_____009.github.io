@@ -1,4 +1,4 @@
-# CLEAN V1.3.5 Test Report
+# CLEAN V1.3.6 Test Report
 
 ## Backend Acceptance
 PASS
@@ -45,7 +45,7 @@ PASS
 - registration camera flow present
 
 
-## V1.3.5 Student Submission Tracker
+## V1.3.6 Student Submission Tracker
 - Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
 - Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
 - โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
@@ -53,7 +53,7 @@ PASS
 - คะแนนยังคงอยู่ใน Teacher/Admin Gradebook ตามเดิม
 - Registration layout hardened สำหรับ checkbox/ปุ่มบนจอ 1366/1600/มือถือ
 
-## Final V1.3.5 verification
+## Final V1.3.6 verification
 - Backend acceptance: PASS
 - Student grades RPC: returns []
 - Student profile numeric score leakage: NONE
@@ -67,3 +67,9 @@ PASS
 - Browser smoke Student: PASS
 - Student Grade menu removed: PASS
 - Registration layout hardening: PASS
+
+## V1.3.6 Registration consent layout regression test
+- Desktop 1440px: consent container > 600px and consent text > 500px: PASS
+- Mobile 390px: consent container > 300px and consent text > 240px: PASS
+- CSS writing-mode is horizontal-tb: PASS
+- Root cause fixed: generic `.check-card > span` 30x30 icon rule no longer constrains `.registration-confirm > span`.

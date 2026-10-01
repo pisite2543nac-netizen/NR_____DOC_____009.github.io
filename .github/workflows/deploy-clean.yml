@@ -1,4 +1,4 @@
-name: Deploy DOC-FULL-NR FINAL CLEAN V1.3.5
+name: Deploy DOC-FULL-NR FINAL CLEAN V1.3.6
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
           test -f site/js/app.js
           test ! -f site/app.js
           test -d site/js/pages
-          grep -q 'CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569' site/BUILD.json
+          grep -q 'CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569' site/BUILD.json
           find site/js -name '*.js' -print0 | xargs -0 -n1 node --check
           ! grep -R "clean_attendance" site
           ! grep -R "clean_my_identity_qr" site
@@ -56,7 +56,7 @@ jobs:
           grep -R "registrationVideo" site/js/ui.js
           grep -R "clean-registration-photo-url" site/js
           grep -R "clean_worksheet_publish_preview" site/js/pages/worksheets.js
-          echo 'FINAL CLEAN V1.3.5 release gate PASS'
+          echo 'FINAL CLEAN V1.3.6 release gate PASS'
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -77,7 +77,7 @@ jobs:
         run: |
           set -euo pipefail
           for i in $(seq 1 45); do
-            if curl -fsSL --max-time 10 "${PAGE_URL}BUILD.json?ts=$(date +%s)" | grep -q 'CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569'; then
+            if curl -fsSL --max-time 10 "${PAGE_URL}BUILD.json?ts=$(date +%s)" | grep -q 'CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569'; then
               echo 'LIVE BUILD VERIFIED'
               exit 0
             fi

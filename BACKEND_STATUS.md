@@ -1,6 +1,6 @@
-# DOC-FULL-NR CLEAN V1.3.5 — Backend Status
+# DOC-FULL-NR CLEAN V1.3.6 — Backend Status
 
-Build: `CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569`
+Build: `CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569`
 
 ## Verified production backend
 - Supabase project: `thjscmfqunlaqxlievna`
@@ -18,7 +18,7 @@ Build: `CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569`
 - QR runtime: disabled
 - Mobile scope: retrospective Paper copy submission only
 
-## Detailed Registration V1.3.5
+## Detailed Registration V1.3.6
 Registration stores: full name, nickname, student code, birth date, phone, email, level, room label, department, major, and a live camera photo.
 
 Registration photos are stored in the private bucket `clean-registration-photos` with a 1 MB JPEG limit. Photos are not public. Authorized profile viewing uses a short-lived signed URL.
@@ -35,7 +35,7 @@ Profile photo URL: Edge Function `clean-registration-photo-url` (JWT required).
 `clean_system_acceptance()` currently reports PASS for registration camera, private photo storage, student profile detail, Group Code correction, teaching content, assessments, RLS, and disabled Attendance/QR runtime.
 
 
-## V1.3.5 Student Submission Tracker
+## V1.3.6 Student Submission Tracker
 - Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
 - Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
 - โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย

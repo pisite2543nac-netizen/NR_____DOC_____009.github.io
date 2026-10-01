@@ -1,7 +1,7 @@
 {
   "product": "DOC-FULL-NR FINAL CLEAN",
-  "version": "1.3.5",
-  "build": "CLEAN-V1.3.5-STUDENT-SUBMISSION-TRACKER-SEM2-2569",
+  "version": "1.3.6",
+  "build": "CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569",
   "runtime": "modular-desktop-tablet-core-paper-retrospective-mobile",
   "frontend_rebuilt_from_scratch": true,
   "mobile": true,
@@ -48,5 +48,6 @@
   "student_score_visibility": false,
   "student_submission_tracker": true,
   "student_dashboard": "worksheet_submission_status_only",
-  "student_grade_menu": false
+  "student_grade_menu": false,
+  "registration_consent_layout_fix": true
 }
