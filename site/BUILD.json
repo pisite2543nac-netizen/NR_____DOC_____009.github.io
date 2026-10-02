@@ -5,7 +5,9 @@
   "runtime": "modular-desktop-tablet-core-paper-retrospective-mobile",
   "frontend_rebuilt_from_scratch": true,
   "mobile": true,
-  "mobile_scope": ["retrospective_paper_copy_submission"],
+  "mobile_scope": [
+    "retrospective_paper_copy_submission"
+  ],
   "attendance_runtime": false,
   "qr_runtime": false,
   "pwa": false,
@@ -39,5 +41,7 @@
   "gradebook_subject_isolation": true,
   "gradebook_group_scope": true,
   "submission_lock_after_submit": true,
-  "bulk_learning_group_assign": true
+  "bulk_learning_group_assign": true,
+  "registration_required_major": "ทธ เทคโนโลยีธุรกิจดิจิทัล",
+  "registration_major_patch": "backend-meta-v3-plus-frontend-fallback"
 }

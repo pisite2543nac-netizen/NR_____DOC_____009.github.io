@@ -18,3 +18,4 @@ Integrity improvements:
 - Registration camera/private photo/profile ยังคงอยู่
 - ทธ.11 ถูกต้อง
 - Attendance / QR / PWA / Service Worker disabled
+- Registration patch: เพิ่มสาขา ทธ เทคโนโลยีธุรกิจดิจิทัล

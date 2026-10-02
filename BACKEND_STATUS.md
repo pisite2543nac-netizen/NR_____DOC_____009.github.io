@@ -30,3 +30,4 @@ Build: `CLEAN-V1.4-LEARNING-GROUP-INTEGRITY-SEM2-2569`
 7. Gradebook now isolates worksheet scores by subject and supports group-scoped loading.
 8. Gradebook uses the latest graded attempt per worksheet instead of averaging duplicate attempts.
 9. Backup snapshot includes learning groups, offerings, teacher assignments and enrollments.
+- Registration major option: `ทธ เทคโนโลยีธุรกิจดิจิทัล` (Edge Function `clean-registration-meta` v3)

@@ -31,3 +31,4 @@ PASS
 - Learning group page + bulk assign
 - Gradebook subject/group selector
 - Student mobile single-function scope
+- Registration major option `ทธ เทคโนโลยีธุรกิจดิจิทัล` present in metadata/UI fallback
