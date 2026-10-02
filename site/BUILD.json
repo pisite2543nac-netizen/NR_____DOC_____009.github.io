@@ -1,7 +1,7 @@
 {
   "product": "DOC-FULL-NR FINAL CLEAN",
-  "version": "1.5.0",
-  "build": "CLEAN-V1.5-CLASSROOM-SECURE-EXAM-SEM2-2569",
+  "version": "1.5.1",
+  "build": "CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569",
   "runtime": "modular-classroom-presence-secure-exam-paper-mobile",
   "frontend_rebuilt_from_scratch": true,
   "mobile": true,
@@ -67,5 +67,12 @@
   "exam_option_shuffle": true,
   "exam_server_timer": true,
   "exam_autosave": true,
-  "exam_student_score_visibility": false
+  "exam_student_score_visibility": false,
+  "grade_total": 100,
+  "worksheet_grade_weight": 40,
+  "behavior_grade_weight": 20,
+  "behavior_punctuality_weight": 10,
+  "behavior_teacher_weight": 10,
+  "behavior_punctuality_rule": "all-assigned-worksheets-submitted-on-or-before-due-date",
+  "teacher_behavior_manual_scoring": true
 }

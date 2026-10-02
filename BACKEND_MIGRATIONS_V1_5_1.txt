@@ -1,0 +1,9 @@
+DOC-FULL-NR CLEAN V1.5.1 Backend Migrations
+Build: CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569
+
+Applied migrations:
+- clean_v15_1_gradebook_40_20_20_20
+- clean_v15_1_behavior_score_indexes
+- clean_v15_1_health_score_rubric
+
+Main SQL source files are included in this package.

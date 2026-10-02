@@ -1,6 +1,6 @@
 # DOC-FULL-NR FINAL CLEAN V1.5
 
-Build marker: `CLEAN-V1.5-CLASSROOM-SECURE-EXAM-SEM2-2569`
+Build marker: `CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569`
 
 V1.5 extends the V1.4 canonical academic model without creating nested student groups:
 
@@ -44,3 +44,7 @@ Legacy Attendance/QR/PWA runtime remains disabled; V1.5 Classroom Presence is a 
 - Correct option IDs are diversified across A/B/C/D at term-exam build time; the correct answer is not a fixed position in source data.
 - Production runs `clean-v15-secure-exam-expiry` every minute to finalize expired secure attempts from their latest saved answers even if the browser closes.
 - A second device is blocked from taking over an active attempt and produces a persisted severity-3 integrity event for teacher review.
+
+
+## V1.5.1 SCORE RUBRIC
+คะแนนรายวิชา 100 คะแนน: งาน 40 + กลางภาค 20 + ปลายภาค 20 + จิตพิสัย 20 (ส่งงานครบตรงเวลา 10 + ครูประเมิน 10)

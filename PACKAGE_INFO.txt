@@ -1,36 +1,10 @@
-DOC-FULL-NR CLEAN V1.5 COMPLETE FULL
-Build: CLEAN-V1.5-CLASSROOM-SECURE-EXAM-SEM2-2569
-Semester: 2/2569
+DOC-FULL-NR FINAL CLEAN V1.5.1
+Build: CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569
 
-Core model:
-- Student 1 คน = กลุ่มเรียนหลัก 1 กลุ่ม
-- กลุ่มเรียน 1 กลุ่ม = หลายรายวิชา
-- Classroom/Exam เป็น Session ชั่วคราว ไม่ใช่กลุ่มซ้อน
-- Teacher Assignment = วิชา + กลุ่มเรียน
-- Gradebook = แยกวิชา + กลุ่มเรียน
+Score rubric:
+- Worksheet 40
+- Midterm 20
+- Final 20
+- Behavior 20 = on-time completeness 10 + teacher judgment 10
 
-V1.5:
-- รหัสเข้าห้องเรียน 6 หลักแบบหมุนตามเวลา
-- Live Classroom Presence (มาเรียน/เข้าสาย/ยังไม่เข้า)
-- Digital Worksheet Presence Gate ป้องกันเริ่ม/ส่งงานทางไกล
-- ห้องสอบปลอดภัยด้วยรหัส 6 หลัก
-- 1 Attempt = 1 อุปกรณ์ (ครูปลดล็อกได้เมื่อจำเป็น)
-- สุ่มข้อและตัวเลือกต่อ Attempt
-- Fullscreen / Focus / Copy / Paste / Context Menu integrity log
-- กลางภาค 50 ข้อ -> 20 คะแนนทุกวิชา
-- ปลายภาค 50 ข้อ -> 20 คะแนนทุกวิชา
-- 25 ข้อเนื้อหา + 25 ข้อคิดวิเคราะห์ระดับยากมาก
-- Student ไม่เห็นคะแนนหลังส่ง
-- Mobile: เข้าห้องเรียนด้วยรหัส + ส่งสำเนา Paper ย้อนหลัง
-
-Existing V1.4 retained:
-- one-student-one-learning-group-many-subjects
-- registration camera/private photo/profile
-- gradebook subject/group isolation
-- locked submission defaults
-- ทธ.11 correction
-- registration major: ทธ เทคโนโลยีธุรกิจดิจิทัล
-- Legacy Attendance / QR / PWA / Service Worker remain disabled
-- Correct option IDs are diversified across A/B/C/D before runtime shuffling
-- Server auto-submit on expiry runs every minute in production (pg_cron)
-- Second-device attempts are blocked and logged for teacher review
+Base: CLEAN V1.5 Classroom & Secure Exam. No project replacement; compatible source update.
