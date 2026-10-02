@@ -1,23 +1,49 @@
-# USER GUIDE — CLEAN V1.4
+# USER GUIDE — CLEAN V1.5
 
-## Admin
-- Approve a student by selecting classroom, seat number and ONE learning group.
-- Do not assign each subject manually; the group controls its subject list.
-- Use **กลุ่มเรียน** for bulk assignment.
-- Use **กลุ่มย่อย/โครงงาน** only when you intentionally need project teams.
-- Assign teachers by subject + learning group.
-- Gradebook requires subject + learning group before loading scores.
+## Admin / Teacher: เปิดห้องเรียน
+1. เลือกเมนู **ห้องเรียน**.
+2. เลือกรายวิชาและกลุ่มเรียน.
+3. ตั้งเวลาถือว่าเข้าสายและรอบเปลี่ยนรหัส.
+4. กด **เปิดห้องเรียน** และแสดงรหัส 6 หลักให้นักศึกษาในห้อง.
+5. ดูรายชื่อ มาเรียน / เข้าสาย / ยังไม่เข้า แบบสด.
+6. ถ้าต้องการป้องกันการทำใบงานทางไกล ให้กด **เปิดทำเฉพาะในห้อง** ที่ใบงานดิจิทัลของคาบ.
+7. เมื่อจบคาบกด **ปิดห้องเรียน**.
 
-## Teacher
-- Select subject, then learning group, then unit.
-- Present slides and open the Digital Worksheet at the end.
-- Set opening and due date/time.
-- Submitted teaching-flow work is locked for the student.
-- Gradebook only contains students/scores from the selected subject and group.
+## Student: เข้าห้องเรียน
+- Desktop/Tablet: เมนู **เข้าห้องเรียน** แล้วกรอกรหัส 6 หลัก.
+- Phone: ปุ่ม **เข้าห้องเรียนด้วยรหัส**.
+- ระบบตรวจว่าบัญชีอยู่ในกลุ่มเรียนและลงวิชานั้นจริงก่อนบันทึกสถานะ.
 
-## Student
-- Belongs to one main learning group.
-- Subjects appear automatically from that group.
-- Desktop/tablet: study, worksheets, exams.
-- Phone: retrospective Paper copy submission only.
-- Student account shows submission status, not scores.
+## Digital Worksheet เฉพาะในห้อง
+1. เข้าห้องเรียนก่อน.
+2. เปิดเมนูใบงานบน Desktop/Tablet.
+3. ใบงานที่มี 🔒 ต้องกรอกรหัสห้องเรียนรอบปัจจุบันอีกครั้ง.
+4. ระบบออกสิทธิ์ให้อุปกรณ์ที่กำลังทำใบงาน.
+5. ถ้าครูปิด Session สิทธิ์จะถูกยกเลิก และระบบจะไม่ให้บันทึก/ส่งต่อผ่าน Secure Flow.
+
+## Admin / Teacher: เปิดห้องสอบ
+1. เมนู **ข้อสอบ** เลือกข้อสอบ.
+2. กลางภาค/ปลายภาคใช้ 50 ข้อและคะแนนเต็ม 20 อัตโนมัติ.
+3. เลือก **เปิดห้องสอบ** -> เลือกกลุ่มเรียน -> เวลาเปิด/ปิด -> รอบรหัส -> จำนวนครั้งออกจากหน้าสอบก่อน Flag.
+4. แสดงรหัส 6 หลักให้นักศึกษาในห้อง.
+5. หน้าคุมสอบแสดง ยังไม่เริ่ม / กำลังสอบ / ส่งแล้ว, สัญญาณล่าสุด, จำนวนเหตุการณ์ และสถานะปกติ/เฝ้าระวัง/ตรวจสอบ.
+6. หากเครื่องนักศึกษามีปัญหาจริง ใช้ **ปลดล็อกเครื่อง** แล้วให้นักศึกษาใส่รหัสห้องสอบใหม่.
+
+## Student: สอบ
+1. ใช้ Desktop/Tablet และเข้าสู่ระบบบัญชีตนเอง.
+2. เมนูข้อสอบ -> กรอกรหัสห้องสอบ 6 หลัก.
+3. อ่านกติกาและกดเริ่มสอบ.
+4. ระบบผูก Attempt กับอุปกรณ์, สุ่มลำดับข้อ/ตัวเลือก, บันทึกคำตอบอัตโนมัติ และจับเวลาจาก Server.
+5. ห้ามสลับแท็บ/แอป ออกจากเต็มหน้าจอ Copy/Paste หรือคลิกขวา เพราะระบบจะบันทึกเหตุการณ์ให้ครูตรวจ.
+6. ส่งข้อสอบแล้วแก้ไขไม่ได้ และนักศึกษาไม่เห็นคะแนน.
+
+## คะแนนสอบ
+- กลางภาค: 50 ข้อดิบ -> 20 คะแนน.
+- ปลายภาค: 50 ข้อดิบ -> 20 คะแนน.
+- ระบบเก็บทั้ง raw score และ scaled score.
+- Gradebook แสดงคะแนนเฉพาะครู/Admin ตามสิทธิ์เดิม.
+
+## เมื่อหมดเวลาสอบ / เปลี่ยนเครื่อง
+- เมื่อหมดเวลา ระบบฝั่ง Server จะส่งคำตอบล่าสุดที่บันทึกไว้โดยอัตโนมัติภายในรอบตรวจประมาณ 1 นาที แม้ Browser ของนักศึกษาจะปิดหรือค้าง.
+- หากพยายามเปิด Attempt เดิมจากเครื่องที่สอง ระบบจะไม่ย้ายสิทธิ์ให้อัตโนมัติ และจะบันทึกเหตุการณ์ให้ครูตรวจ.
+- กรณีเครื่องเดิมเสียจริง ครูใช้ **ปลดล็อกเครื่อง** แล้วให้นักศึกษาใส่รหัสห้องสอบใหม่.

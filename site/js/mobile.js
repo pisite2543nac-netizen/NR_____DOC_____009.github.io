@@ -1,11 +1,12 @@
 import { state } from './state.js';
 import { CONFIG } from './config.js';
-import { rpc, uploadMobileImage, logout } from './api.js';
+import { rpc, uploadMobileImage, logout, friendlyError } from './api.js';
 import { $, esc, arr, toast, loading } from './ui.js';
+import { deviceToken } from './security.js';
 
 export function renderMobileShell(onLoggedOut) {
   document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div>`;
-  $('#app').innerHTML = `<div class="mobile-shell"><header class="mobile-header"><div><strong>DOC-FULL-NR</strong><small>ส่งใบงานย้อนหลัง • ${CONFIG.version}</small></div><button class="btn light sm" id="mobileLogout">ออก</button></header><main class="mobile-main" id="mobileMain"></main><footer class="mobile-footer"><span>${esc(state.profile.student_code || '')}</span><span>Paper Retrospective Only</span></footer></div>`;
+  $('#app').innerHTML = `<div class="mobile-shell"><header class="mobile-header"><div><strong>DOC-FULL-NR</strong><small>เข้าห้องเรียน + ส่งใบงานย้อนหลัง • ${CONFIG.version}</small></div><button class="btn light sm" id="mobileLogout">ออก</button></header><main class="mobile-main" id="mobileMain"></main><footer class="mobile-footer"><span>${esc(state.profile.student_code || '')}</span><span>เข้าห้องเรียน + ส่งสำเนาใบงาน</span></footer></div>`;
   $('#mobileLogout').onclick = async () => { await logout(); onLoggedOut(); };
   renderMobileHome();
 }
@@ -16,8 +17,32 @@ async function renderMobileHome() {
   let targets = [];
   try { targets = arr(await rpc('clean_my_mobile_copy_targets')); }
   catch { targets = []; }
-  main.innerHTML = `<section class="mobile-welcome"><span>นักศึกษา</span><h1>${esc(state.profile.display_name || state.profile.full_name || '')}</h1><p>${esc(state.profile.student_code || '')}</p></section><button class="mobile-primary-action" id="openCopy"><span>📄</span><strong>ส่งใบงานย้อนหลัง</strong><small>ถ่ายรูปสำเนาใบงานกระดาษที่ครูเปิดรับ</small></button><div class="mobile-stat"><strong>${targets.length}</strong><span>ใบงานที่เปิดรับย้อนหลัง</span></div><div class="mobile-rule"><strong>มือถือใช้ทำอะไรได้?</strong><p>ใช้ส่งสำเนาใบงานกระดาษย้อนหลังเท่านั้น ไม่มีเช็กชื่อ ไม่มี QR และไม่มีเมนูอื่น</p></div>`;
+  main.innerHTML = `<section class="mobile-welcome"><span>นักศึกษา</span><h1>${esc(state.profile.display_name || state.profile.full_name || '')}</h1><p>${esc(state.profile.student_code || '')}</p></section>
+    <button class="mobile-primary-action" id="openClassJoin"><span>🏫</span><strong>เข้าห้องเรียนด้วยรหัส</strong><small>กรอกรหัส 6 หลักที่ครูแสดงในคาบเรียน</small></button>
+    <button class="mobile-primary-action secondary" id="openCopy"><span>📄</span><strong>ส่งใบงานย้อนหลัง</strong><small>ถ่ายรูปสำเนาใบงานกระดาษที่ครูเปิดรับ</small></button>
+    <div class="mobile-stat"><strong>${targets.length}</strong><span>ใบงานที่เปิดรับย้อนหลัง</span></div>
+    <div class="mobile-rule"><strong>มือถือใช้ทำอะไรได้?</strong><p>ใช้เข้าห้องเรียนด้วยรหัส และส่งสำเนาใบงานกระดาษย้อนหลังเท่านั้น การทำข้อสอบปลอดภัยและงานหลักให้ใช้คอมพิวเตอร์หรือแท็บเล็ต</p></div>`;
+  $('#openClassJoin').onclick = renderClassJoin;
   $('#openCopy').onclick = () => renderCopy(targets);
+}
+
+function renderClassJoin() {
+  const main = $('#mobileMain');
+  main.innerHTML = `<div class="mobile-page-title"><button class="icon-btn" id="backMobile">←</button><div><h1>เข้าห้องเรียน</h1><p>รหัส 6 หลักเปลี่ยนอัตโนมัติตามเวลาที่ครูกำหนด</p></div></div><section class="mobile-card"><div class="rule-icon">🏫</div><h2>กรอกรหัสห้องเรียน</h2><p>ต้องเข้าสู่ระบบด้วยบัญชีของตนเอง ระบบจะตรวจรายวิชาและกลุ่มเรียนก่อนบันทึกการเข้าเรียน</p><label class="field"><span>รหัสห้องเรียน</span><input id="mobileClassCode" class="code-input" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000"></label><button class="btn primary full" id="joinClass">ยืนยันเข้าห้องเรียน</button><div id="classJoinResult"></div></section>`;
+  $('#backMobile').onclick = renderMobileHome;
+  $('#joinClass').onclick = async () => {
+    const code = String($('#mobileClassCode').value || '').trim();
+    const out = $('#classJoinResult');
+    if (!/^\d{6}$/.test(code)) { out.innerHTML = '<div class="error-inline">กรุณากรอกรหัส 6 หลัก</div>'; return; }
+    const btn = $('#joinClass'); btn.disabled = true;
+    try {
+      const r = await rpc('clean_class_join', { p_code: code, p_device_token: deviceToken() });
+      out.innerHTML = `<div class="success-inline">เข้าห้องเรียนสำเร็จ • ${r.status === 'late' ? 'เข้าสาย' : 'มาเรียน'} • ${esc(r.subject_code || '')}</div>`;
+      toast('เข้าห้องเรียนสำเร็จ', 'ok');
+    } catch (error) {
+      out.innerHTML = `<div class="error-inline">${esc(friendlyError(error))}</div>`;
+    } finally { btn.disabled = false; }
+  };
 }
 
 function renderCopy(targets) {
@@ -58,6 +83,6 @@ async function submitCopy() {
     progress.innerHTML = '<div class="success-inline">ส่งสำเนางานเรียบร้อยแล้ว รอครูตรวจรับ</div>';
     toast('ส่งงานย้อนหลังสำเร็จ', 'ok');
   } catch (error) {
-    progress.innerHTML = `<div class="error-inline">${esc(error.message)}</div>`;
+    progress.innerHTML = `<div class="error-inline">${esc(friendlyError(error))}</div>`;
   } finally { button.disabled = false; }
 }

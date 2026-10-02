@@ -43,14 +43,15 @@ export function empty(message = 'ยังไม่มีข้อมูล') {
 
 export function statusPill(status) {
   const raw = String(status || '-');
-  const ok = ['approved', 'active', 'published', 'graded', 'accepted', 'submitted', 'final'].includes(raw);
-  const warn = ['pending', 'draft', 'open', 'needs_review'].includes(raw);
-  const bad = ['rejected', 'inactive', 'suspended', 'failed'].includes(raw);
+  const ok = ['approved', 'active', 'published', 'graded', 'accepted', 'submitted', 'final', 'present', 'normal'].includes(raw);
+  const warn = ['pending', 'draft', 'open', 'needs_review', 'late', 'warning', 'not_started'].includes(raw);
+  const bad = ['rejected', 'inactive', 'suspended', 'failed', 'absent', 'flagged'].includes(raw);
   const cls = ok ? 'ok' : warn ? 'warn' : bad ? 'bad' : 'info';
   const labels = {
     approved: 'อนุมัติแล้ว', pending: 'รออนุมัติ', rejected: 'ไม่อนุมัติ', active: 'ใช้งาน', inactive: 'ปิดใช้งาน',
     published: 'เผยแพร่', draft: 'ฉบับร่าง', closed: 'ปิดงาน', graded: 'ให้คะแนนแล้ว', submitted: 'ส่งแล้ว',
     needs_review: 'รอตรวจ', accepted: 'รับงาน', checked: 'ตรวจแล้ว', not_submitted: 'ยังไม่ส่ง', overdue_not_submitted: 'เกินกำหนด • ยังไม่ส่ง', paper: 'กระดาษ', digital: 'ดิจิทัล', student: 'นักศึกษา', teacher: 'ครู', admin: 'ผู้ดูแล',
+    practice: 'แบบทดสอบประจำหน่วย', midterm: 'สอบกลางภาค', final: 'สอบปลายภาค', open: 'เปิดอยู่', present: 'มาเรียน', late: 'เข้าสาย', absent: 'ยังไม่เข้า', normal: 'ปกติ', warning: 'เฝ้าระวัง', flagged: 'ตรวจสอบ', not_started: 'ยังไม่เริ่ม',
   };
   return `<span class="pill ${cls}">${esc(labels[raw] || raw)}</span>`;
 }
@@ -99,7 +100,7 @@ export function renderShell(menus, onNavigate, onLogout) {
   document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div><div id="modalRoot"></div>`;
   const role = state.profile?.role || 'student';
   const displayName = state.profile?.display_name || state.profile?.full_name || '';
-  $('#app').innerHTML = `<div class="app-shell"><header class="topbar"><div class="brand"><div class="brand-mark">NR</div><div><strong>DOC-FULL-NR FINAL CLEAN</strong><small>Semester ${CONFIG.semester}/${CONFIG.academicYear} • ${CONFIG.version}</small></div></div><nav id="nav" class="nav">${menus.map(([route, label]) => `<button data-route="${route}">${esc(label)}</button>`).join('')}</nav><div class="userbox"><span class="role-badge">${esc(ROLE_LABEL[role] || role)}</span><span class="user-name">${esc(displayName)}</span><button class="btn light sm" id="logoutBtn">ออก</button></div></header><main id="main" class="main">${loading()}</main><footer class="footer"><span>${esc(CONFIG.build)}</span><span>Desktop / Tablet Core • Mobile: ส่งใบงานย้อนหลังเท่านั้น</span></footer></div>`;
+  $('#app').innerHTML = `<div class="app-shell"><header class="topbar"><div class="brand"><div class="brand-mark">NR</div><div><strong>DOC-FULL-NR FINAL CLEAN</strong><small>Semester ${CONFIG.semester}/${CONFIG.academicYear} • ${CONFIG.version}</small></div></div><nav id="nav" class="nav">${menus.map(([route, label]) => `<button data-route="${route}">${esc(label)}</button>`).join('')}</nav><div class="userbox"><span class="role-badge">${esc(ROLE_LABEL[role] || role)}</span><span class="user-name">${esc(displayName)}</span><button class="btn light sm" id="logoutBtn">ออก</button></div></header><main id="main" class="main">${loading()}</main><footer class="footer"><span>${esc(CONFIG.build)}</span><span>Desktop / Tablet Core • Mobile: เข้าห้องเรียน + ส่งใบงานย้อนหลัง</span></footer></div>`;
   $('#nav').onclick = (event) => {
     const button = event.target.closest('[data-route]');
     if (button) onNavigate(button.dataset.route);
@@ -113,7 +114,7 @@ export function markActiveRoute(route) {
 
 export function renderLogin({ onLogin, onRegister }) {
   document.body.innerHTML = `<div id="app"></div><div id="toast" class="toast"></div><div id="modalRoot"></div>`;
-  $('#app').innerHTML = `<div class="auth-shell"><section class="auth-hero"><span class="hero-chip">FINAL CLEAN • Semester ${CONFIG.semester}/${CONFIG.academicYear}</span><div class="hero-logo">NR</div><h1>DOC-FULL-NR</h1><h2>ระบบงานการเรียนการสอน</h2><p>Frontend ใหม่ทั้งชุดสำหรับ Desktop/Tablet และ Mobile Companion ที่เหลือเฉพาะการส่งสำเนาใบงานย้อนหลัง</p><div class="hero-features"><span>✓ 13 รายวิชา</span><span>✓ 221 หน่วยการสอน</span><span>✓ 4,420 สไลด์</span><span>✓ Paper / Digital Worksheet</span></div></section><section class="auth-panel"><form class="auth-card" id="loginForm"><div class="eyebrow">เข้าสู่ระบบ</div><h2>ยินดีต้อนรับ</h2><p>ใช้ Username, รหัสนักศึกษา หรือ Email</p><label class="field"><span>บัญชีผู้ใช้</span><input name="identifier" autocomplete="username" required></label><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" autocomplete="current-password" required></label><button class="btn primary full" type="submit">เข้าสู่ระบบ</button><button class="btn light full" id="registerBtn" type="button">ลงทะเบียนนักศึกษา</button><div id="loginError"></div><div class="build-note">Build: ${esc(CONFIG.build)}</div></form></section></div>`;
+  $('#app').innerHTML = `<div class="auth-shell"><section class="auth-hero"><span class="hero-chip">FINAL CLEAN • Semester ${CONFIG.semester}/${CONFIG.academicYear}</span><div class="hero-logo">NR</div><h1>DOC-FULL-NR</h1><h2>ระบบงานการเรียนการสอน</h2><p>ระบบการเรียนการสอนสำหรับ Desktop/Tablet พร้อมห้องเรียนด้วยรหัส ห้องสอบปลอดภัย และ Mobile Companion สำหรับเข้าห้องเรียน/ส่งสำเนาใบงานย้อนหลัง</p><div class="hero-features"><span>✓ 13 รายวิชา</span><span>✓ 221 หน่วยการสอน</span><span>✓ 4,420 สไลด์</span><span>✓ Paper / Digital Worksheet</span><span>✓ ห้องสอบปลอดภัย 50 ข้อ → 20 คะแนน</span></div></section><section class="auth-panel"><form class="auth-card" id="loginForm"><div class="eyebrow">เข้าสู่ระบบ</div><h2>ยินดีต้อนรับ</h2><p>ใช้ Username, รหัสนักศึกษา หรือ Email</p><label class="field"><span>บัญชีผู้ใช้</span><input name="identifier" autocomplete="username" required></label><label class="field"><span>รหัสผ่าน</span><input name="password" type="password" autocomplete="current-password" required></label><button class="btn primary full" type="submit">เข้าสู่ระบบ</button><button class="btn light full" id="registerBtn" type="button">ลงทะเบียนนักศึกษา</button><div id="loginError"></div><div class="build-note">Build: ${esc(CONFIG.build)}</div></form></section></div>`;
   $('#registerBtn').onclick = onRegister;
   $('#loginForm').onsubmit = async (event) => {
     event.preventDefault();

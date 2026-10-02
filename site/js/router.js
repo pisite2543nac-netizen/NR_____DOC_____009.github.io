@@ -4,15 +4,15 @@ import { markActiveRoute, setMain, loading, showPageError } from './ui.js';
 export const MENUS = Object.freeze({
   admin: [
     ['dashboard', 'แดชบอร์ด'], ['subjects', 'วิชา/ห้อง'], ['teaching', 'เนื้อหาการสอน'], ['users', 'ผู้ใช้'],
-    ['assignments', 'มอบหมายครู'], ['worksheets', 'ใบงาน'], ['submissions', 'ตรวจงาน'], ['exams', 'ข้อสอบ'],
+    ['assignments', 'มอบหมายครู'], ['classroom', 'ห้องเรียน'], ['worksheets', 'ใบงาน'], ['submissions', 'ตรวจงาน'], ['exams', 'ข้อสอบ'],
     ['gradebook', 'คะแนน'], ['groups', 'กลุ่มเรียน'], ['diagnostics', 'ตรวจระบบ'],
   ],
   teacher: [
-    ['dashboard', 'แดชบอร์ด'], ['subjects', 'รายวิชา'], ['teaching', 'เนื้อหาการสอน'], ['worksheets', 'ใบงาน'],
+    ['dashboard', 'แดชบอร์ด'], ['subjects', 'รายวิชา'], ['teaching', 'เนื้อหาการสอน'], ['classroom', 'ห้องเรียน'], ['worksheets', 'ใบงาน'],
     ['submissions', 'ตรวจงาน'], ['exams', 'ข้อสอบ'], ['gradebook', 'คะแนน'], ['groups', 'กลุ่มเรียน'], ['diagnostics', 'ตรวจระบบ'],
   ],
   student: [
-    ['dashboard', 'แดชบอร์ด'], ['subjects', 'วิชาของฉัน'], ['teaching', 'เนื้อหาการเรียน'], ['worksheets', 'ใบงาน'],
+    ['dashboard', 'แดชบอร์ด'], ['subjects', 'วิชาของฉัน'], ['teaching', 'เนื้อหาการเรียน'], ['classroom', 'เข้าห้องเรียน'], ['worksheets', 'ใบงาน'],
     ['exams', 'ข้อสอบ'], ['profile', 'โปรไฟล์'],
   ],
 });

@@ -1,0 +1,29 @@
+DOC-FULL-NR CLEAN V1.5 — Production Backend Migration Manifest
+Project: DOC-FULL-NR-UNIVERSAL
+Project ref: thjscmfqunlaqxlievna
+Build: CLEAN-V1.5-CLASSROOM-SECURE-EXAM-SEM2-2569
+
+Applied production migrations:
+- clean_v15_classroom_sessions
+- clean_v15_secure_worksheet_gate
+- clean_v15_secure_exam_sessions
+- clean_v15_secure_exam_runtime
+- clean_v15_term_exam_50_builder
+- clean_v15_staff_integrity_and_class_live
+- clean_v15_health_acceptance
+- clean_v15_worksheet_cross_device_class_presence
+- clean_v15_revoke_legacy_anon_staff_rpc
+- clean_v15_diversify_term_answer_ids
+- clean_v15_randomize_term_answer_ids
+- clean_v15_secure_exam_server_auto_submit
+- clean_v15_persist_second_device_event
+
+Production verification:
+- Clean tables RLS: 37/37
+- Anonymous Clean RPC: 0
+- Midterm 13/13 = 50 questions, 20 points, one attempt
+- Final 13/13 = 50 questions, 20 points, one attempt
+- Classroom Presence / Worksheet Gate / Secure Exam runtime enabled
+- Server expiry cron: clean-v15-secure-exam-expiry (* * * * *)
+
+Note: Production schema is the authoritative backend state. This manifest records migrations already applied; the package installer deploys the frontend source to the configured GitHub Pages repository and does not recreate the Supabase project.

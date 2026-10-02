@@ -2,6 +2,7 @@ import { rpc } from '../api.js';
 import { state } from '../state.js';
 import { pageHead, setMain, arr, esc, statusPill, modal, options, toast, fmt, dateInput, saveLocalDraft, loadLocalDraft, clearLocalDraft } from '../ui.js';
 import { navigate } from '../router.js';
+import { deviceToken } from '../security.js';
 
 let staffScope = null;
 let staffRows = [];
@@ -79,10 +80,26 @@ export async function showWorksheetDetail(id, staff = false) {
 async function studentWorksheets() {
   const rows = arr(await rpc('clean_my_worksheets'));
   const studentStatus = (status) => status === 'graded' ? 'checked' : (status || 'not_submitted');
-  setMain(pageHead('ใบงานของฉัน', 'ตรวจสถานะการส่งงาน • ไม่แสดงคะแนน') + `<div class="card-grid">${rows.map((w) => `<article class="subject-card"><div class="subject-code">${esc(w.subject_code || '')}${w.group_code ? ` • ${esc(w.group_code)}` : ''}</div><h3>${esc(w.title)}</h3><p>${esc(w.instructions || '')}</p><div class="meta-row">${statusPill(w.mode)} ${statusPill(studentStatus(w.submission_status))}</div><div class="row-actions"><button class="btn light" data-detail="${w.id}">รายละเอียด</button>${w.mode === 'digital' ? `<button class="btn primary" data-do="${w.id}">ทำใบงาน</button>` : `<button class="btn primary" data-print="${w.id}">พิมพ์ใบงาน</button>`}</div></article>`).join('')}</div>`);
+  setMain(pageHead('ใบงานของฉัน', 'ตรวจสถานะการส่งงาน • ไม่แสดงคะแนน • ใบงานที่ล็อกห้องต้องยืนยันรหัสห้องเรียน') + `<div class="card-grid">${rows.map((w) => `<article class="subject-card"><div class="subject-code">${esc(w.subject_code || '')}${w.group_code ? ` • ${esc(w.group_code)}` : ''}</div><h3>${esc(w.title)}</h3><p>${esc(w.instructions || '')}</p><div class="meta-row">${statusPill(w.mode)} ${statusPill(studentStatus(w.submission_status))}${w.requires_class_presence ? `<span class="pill warn">🔒 เฉพาะในห้องเรียน</span>` : ''}</div>${w.requires_class_presence ? `<div class="notice-card compact"><strong>${w.class_access_granted ? 'ยืนยันสิทธิ์ห้องเรียนแล้ว' : 'ต้องอยู่ในคาบเรียนจริง'}</strong><p>${w.class_access_granted ? 'สิทธิ์นี้ใช้กับอุปกรณ์นี้และหมดอายุตามคาบเรียน' : 'กรอกรหัสห้องเรียนที่ครูแสดงก่อนเปิดใบงาน รหัสเปลี่ยนอัตโนมัติ'}</p></div>` : ''}<div class="row-actions"><button class="btn light" data-detail="${w.id}">รายละเอียด</button>${w.mode === 'digital' ? `<button class="btn primary" data-do="${w.id}">${w.requires_class_presence && !w.class_access_granted ? 'ยืนยันรหัสแล้วทำใบงาน' : 'ทำใบงาน'}</button>` : `<button class="btn primary" data-print="${w.id}">พิมพ์ใบงาน</button>`}</div></article>`).join('')}</div>`);
   document.querySelectorAll('[data-detail]').forEach((b) => b.onclick = () => showWorksheetDetail(b.dataset.detail));
-  document.querySelectorAll('[data-do]').forEach((b) => b.onclick = () => doWorksheet(rows.find((x) => x.id === b.dataset.do)));
+  document.querySelectorAll('[data-do]').forEach((b) => b.onclick = () => openDigitalWorksheet(rows.find((x) => x.id === b.dataset.do)));
   document.querySelectorAll('[data-print]').forEach((b) => b.onclick = () => showWorksheetDetail(b.dataset.print));
+}
+
+function openDigitalWorksheet(w) {
+  if (!w?.requires_class_presence || w.class_access_granted) return doWorksheet(w);
+  modal({
+    title: 'ยืนยันรหัสห้องเรียน',
+    body: `<div class="notice-card"><strong>ใบงานนี้ทำได้เฉพาะในคาบเรียน</strong><p>กรอกรหัส 6 หลักที่ครูแสดงในห้องเรียน ระบบจะผูกสิทธิ์กับบัญชี คาบเรียน และอุปกรณ์นี้</p></div><label class="field"><span>รหัสห้องเรียน</span><input class="code-input" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required autofocus></label>`,
+    submitLabel: 'ยืนยันและเปิดใบงาน',
+    onSubmit: async (form, close) => {
+      await rpc('clean_worksheet_access_grant', { p_worksheet_id: w.id, p_code: form.get('code'), p_device_token: deviceToken() });
+      w.class_access_granted = true;
+      close();
+      doWorksheet(w);
+      return false;
+    },
+  });
 }
 
 function renderQuestions(questions, answers = {}) {
@@ -100,8 +117,8 @@ function collectAnswers(root) {
 }
 
 function doWorksheet(w) {
-  modal({ title: `ใบงาน • ${w.title}`, wide: true, body: `<div class="notice-card"><strong>${esc(w.subject_code || '')}</strong><p>กำหนดส่ง ${fmt(w.due_at)}</p></div><div id="answerForm">${renderQuestions(w.questions || [], w.answers || {})}</div>`, submitLabel: 'ส่งใบงาน', extraFooter: '<button class="btn light" type="button" id="saveWorksheetDraft">บันทึกร่าง</button>', onSubmit: async () => { await rpc('clean_submission_save', { p_worksheet_id: w.id, p_answers: collectAnswers(document.querySelector('#answerForm')), p_submit: true }); toast('ส่งใบงานแล้ว', 'ok'); await worksheetsPage(); } });
-  document.querySelector('#saveWorksheetDraft').onclick = async () => { await rpc('clean_submission_save', { p_worksheet_id: w.id, p_answers: collectAnswers(document.querySelector('#answerForm')), p_submit: false }); toast('บันทึกร่างแล้ว', 'ok'); };
+  modal({ title: `ใบงาน • ${w.title}`, wide: true, body: `<div class="notice-card"><strong>${esc(w.subject_code || '')}${w.requires_class_presence ? ' • 🔒 เฉพาะในห้องเรียน' : ''}</strong><p>กำหนดส่ง ${fmt(w.due_at)}${w.requires_class_presence ? ' • หากครูปิดคาบเรียน จะไม่สามารถบันทึกหรือส่งต่อจากระยะไกลได้' : ''}</p></div><div id="answerForm">${renderQuestions(w.questions || [], w.answers || {})}</div>`, submitLabel: 'ส่งใบงาน', extraFooter: '<button class="btn light" type="button" id="saveWorksheetDraft">บันทึกร่าง</button>', onSubmit: async () => { await rpc('clean_submission_save_v2', { p_worksheet_id: w.id, p_answers: collectAnswers(document.querySelector('#answerForm')), p_submit: true, p_device_token: deviceToken() }); toast('ส่งใบงานแล้ว', 'ok'); await worksheetsPage(); } });
+  document.querySelector('#saveWorksheetDraft').onclick = async () => { await rpc('clean_submission_save_v2', { p_worksheet_id: w.id, p_answers: collectAnswers(document.querySelector('#answerForm')), p_submit: false, p_device_token: deviceToken() }); toast('บันทึกร่างแล้ว', 'ok'); };
 }
 
 async function paperRoster(id) {

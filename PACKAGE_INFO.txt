@@ -1,21 +1,36 @@
-DOC-FULL-NR CLEAN V1.4 COMPLETE FULL
-Build: CLEAN-V1.4-LEARNING-GROUP-INTEGRITY-SEM2-2569
+DOC-FULL-NR CLEAN V1.5 COMPLETE FULL
+Build: CLEAN-V1.5-CLASSROOM-SECURE-EXAM-SEM2-2569
 Semester: 2/2569
 
 Core model:
 - Student 1 คน = กลุ่มเรียนหลัก 1 กลุ่ม
 - กลุ่มเรียน 1 กลุ่ม = หลายรายวิชา
-- กลุ่มย่อย/กลุ่มโครงงานเป็น Optional และไม่ใช้แจกงาน/คิดคะแนน
+- Classroom/Exam เป็น Session ชั่วคราว ไม่ใช่กลุ่มซ้อน
 - Teacher Assignment = วิชา + กลุ่มเรียน
-- Digital Worksheet = วิชา + กลุ่มเรียน + หน่วย
 - Gradebook = แยกวิชา + กลุ่มเรียน
 
-Integrity improvements:
-- Bulk Assign นักศึกษาหลายคนเข้ากลุ่มเดียวและลงวิชาอัตโนมัติ
-- Submission หลังส่งถูกล็อกตามค่าเริ่มต้นของ Teaching Flow
-- Gradebook แก้การปะปนคะแนนข้ามวิชา และใช้ Attempt ล่าสุดที่ตรวจแล้วต่อใบงาน
-- Student ไม่เห็นคะแนน เห็นเฉพาะสถานะการส่ง
-- Registration camera/private photo/profile ยังคงอยู่
-- ทธ.11 ถูกต้อง
-- Attendance / QR / PWA / Service Worker disabled
-- Registration patch: เพิ่มสาขา ทธ เทคโนโลยีธุรกิจดิจิทัล
+V1.5:
+- รหัสเข้าห้องเรียน 6 หลักแบบหมุนตามเวลา
+- Live Classroom Presence (มาเรียน/เข้าสาย/ยังไม่เข้า)
+- Digital Worksheet Presence Gate ป้องกันเริ่ม/ส่งงานทางไกล
+- ห้องสอบปลอดภัยด้วยรหัส 6 หลัก
+- 1 Attempt = 1 อุปกรณ์ (ครูปลดล็อกได้เมื่อจำเป็น)
+- สุ่มข้อและตัวเลือกต่อ Attempt
+- Fullscreen / Focus / Copy / Paste / Context Menu integrity log
+- กลางภาค 50 ข้อ -> 20 คะแนนทุกวิชา
+- ปลายภาค 50 ข้อ -> 20 คะแนนทุกวิชา
+- 25 ข้อเนื้อหา + 25 ข้อคิดวิเคราะห์ระดับยากมาก
+- Student ไม่เห็นคะแนนหลังส่ง
+- Mobile: เข้าห้องเรียนด้วยรหัส + ส่งสำเนา Paper ย้อนหลัง
+
+Existing V1.4 retained:
+- one-student-one-learning-group-many-subjects
+- registration camera/private photo/profile
+- gradebook subject/group isolation
+- locked submission defaults
+- ทธ.11 correction
+- registration major: ทธ เทคโนโลยีธุรกิจดิจิทัล
+- Legacy Attendance / QR / PWA / Service Worker remain disabled
+- Correct option IDs are diversified across A/B/C/D before runtime shuffling
+- Server auto-submit on expiry runs every minute in production (pg_cron)
+- Second-device attempts are blocked and logged for teacher review

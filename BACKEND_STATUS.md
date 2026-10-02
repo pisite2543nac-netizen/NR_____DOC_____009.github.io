@@ -1,33 +1,52 @@
-# Backend Status — CLEAN V1.4
+# Backend Status — CLEAN V1.5
 
-Build: `CLEAN-V1.4-LEARNING-GROUP-INTEGRITY-SEM2-2569`
+Build: `CLEAN-V1.5-CLASSROOM-SECURE-EXAM-SEM2-2569`
 
-- Clean tables: 31 / RLS enabled: 31
+- Clean tables: 37 / RLS enabled: 37
 - Anonymous Clean RPC executable: 0
 - Subjects: 13
 - Teaching units: 221
-- Slides: 4,420
+- Virtual slides: 4,420
 - Unit worksheet templates: 221
 - Unit exam templates: 221
-- Midterm templates: 13
-- Final templates: 13
+- Midterm templates: 13 / all 50 questions / 20 points
+- Final templates: 13 / all 50 questions / 20 points
 - Canonical learning groups: 6
-- Active subject offerings without learning group: 0
-- Student multi-learning-group conflict: 0
-- Group code correction: `ทธ.11`
+- Learning model: one student -> one learning group -> many subjects
 - Registration camera: private storage
 - Student score visibility: disabled
-- Attendance / QR runtime: disabled
+- Legacy Attendance / QR runtime: disabled
+- Classroom Presence runtime: enabled
+- Secure Exam runtime: enabled
+- Worksheet Presence Gate: enabled
 
-## V1.4 integrity changes
+## New production tables
+- `clean_class_sessions`
+- `clean_class_presence`
+- `clean_worksheet_access_grants`
+- `clean_exam_sessions`
+- `clean_exam_entry_grants`
+- `clean_exam_integrity_events`
 
-1. Student has one canonical `learning_group_id`.
-2. One learning group maps to multiple subject offerings.
-3. Assigning a student to a group auto-enrolls all active subjects of that group.
-4. Teacher assignment is Subject + Learning Group.
-5. Teaching Digital Worksheet is scoped to the subject offering/group.
-6. Teaching-flow Digital Worksheet defaults to one locked submission (`allow_resubmit=false`, `max_attempts=1`).
-7. Gradebook now isolates worksheet scores by subject and supports group-scoped loading.
-8. Gradebook uses the latest graded attempt per worksheet instead of averaging duplicate attempts.
-9. Backup snapshot includes learning groups, offerings, teacher assignments and enrollments.
-- Registration major option: `ทธ เทคโนโลยีธุรกิจดิจิทัล` (Edge Function `clean-registration-meta` v3)
+All new exposed-schema tables have RLS enabled and direct client table privileges are revoked. Access is through authenticated RPCs with server-side role/scope checks.
+
+## Secure runtime
+- Rotating classroom/exam code is derived server-side from a private session secret and time bucket.
+- Secure term exam attempts are one-device and use persisted randomized question/option payloads.
+- Raw exam score 0-50 is stored separately from the scaled gradebook score 0-20.
+- Integrity events record fullscreen/focus/copy/paste/context-menu events for teacher review.
+- Gated Digital Worksheets require class presence + current class code + active class session.
+- Legacy non-secure RPCs reject attempts to bypass secure term exams or gated worksheets.
+
+## Security audit
+- Production verification: 37/37 Clean tables RLS.
+- Production verification: anonymous Clean RPC count = 0.
+- Legacy anonymous `staff_*_v23` worksheet SECURITY DEFINER RPC access found by advisor was revoked.
+- Supabase advisor still reports informational RLS-without-policy notices for RPC-only tables; direct table privileges are intentionally revoked so those tables default-deny through RLS.
+
+## V1.5 final hardening
+- Correct choice IDs are diversified among `A/B/C/D` when term exams are built; the correct option is not a fixed client-visible position.
+- Each secure attempt still receives an independently shuffled question and option order persisted to `question_payload`.
+- A server-side `pg_cron` job (`clean-v15-secure-exam-expiry`) checks every minute and submits the latest saved answers when an attempt/session has expired.
+- Second-device attempts are blocked and persist a severity-3 `second_device` integrity event instead of silently rolling the evidence back.
+- Teacher device unlock remains explicit and audited; integrity events are evidence for review, not an automatic cheating verdict.
