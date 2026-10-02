@@ -1,7 +1,7 @@
 {
   "product": "DOC-FULL-NR FINAL CLEAN",
-  "version": "1.5.1",
-  "build": "CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569",
+  "version": "1.5.2",
+  "build": "CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569",
   "runtime": "modular-classroom-presence-secure-exam-paper-mobile",
   "frontend_rebuilt_from_scratch": true,
   "mobile": true,
@@ -74,5 +74,8 @@
   "behavior_punctuality_weight": 10,
   "behavior_teacher_weight": 10,
   "behavior_punctuality_rule": "all-assigned-worksheets-submitted-on-or-before-due-date",
-  "teacher_behavior_manual_scoring": true
+  "teacher_behavior_manual_scoring": true,
+  "backend_build": "CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569",
+  "ui_exam_modal_layout_fix": true,
+  "ui_form_checkbox_layout_fix": true
 }

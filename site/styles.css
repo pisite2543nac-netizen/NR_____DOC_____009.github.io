@@ -86,6 +86,66 @@
   .registration-confirm.check-card>span>small{font-size:11px;line-height:1.6}
 }
 
+/* V1.5.2 UI fix: form checkbox cards keep Thai text horizontal and full width */
+.form-check-card{
+  display:grid!important;
+  grid-template-columns:24px minmax(0,1fr)!important;
+  align-items:start!important;
+  justify-content:stretch!important;
+  gap:12px!important;
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  padding:14px 16px!important;
+  margin:14px 0!important;
+}
+.form-check-card>input{
+  grid-column:1!important;
+  width:20px!important;
+  height:20px!important;
+  min-width:20px!important;
+  max-width:20px!important;
+  margin:2px 0 0!important;
+  align-self:start!important;
+}
+.form-check-card>span{
+  grid-column:2!important;
+  display:block!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  place-items:initial!important;
+  align-items:initial!important;
+  justify-items:initial!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow:visible!important;
+}
+.form-check-card>span>b,
+.form-check-card>span>small{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+}
+.form-check-card>span>b{font-size:14px;line-height:1.5;margin:0 0 3px!important}
+.form-check-card>span>small{font-size:12px;line-height:1.65;margin:0!important;color:var(--muted)}
+.form-check-card + .notice-card{margin-top:0}
+@media(max-width:560px){
+  .form-check-card{grid-template-columns:22px minmax(0,1fr)!important;padding:12px!important;gap:10px!important}
+  .form-check-card>span>small{font-size:11px;line-height:1.6}
+}
+
 /* V1.5 Classroom Presence + Secure Exam */
 .secure-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 16px}.secure-summary>div{padding:15px 16px;border:1px solid var(--line);border-radius:15px;background:#fff;box-shadow:var(--shadow)}.secure-summary span,.secure-summary small{display:block;color:var(--muted);font-size:11px}.secure-summary strong{display:block;font-size:20px;margin:4px 0;color:var(--primary)}
 .class-code-card{text-align:center;display:grid;place-items:center;align-content:center;min-height:170px;background:linear-gradient(145deg,#f8fbff,#eef4ff)}.class-code-card>span{font-size:12px;font-weight:800;color:var(--muted)}.class-code-card>strong{font-size:52px;letter-spacing:.14em;color:var(--primary);line-height:1.1;margin:8px 0}.class-code-card>small{color:var(--muted)}.exam-code>strong{font-size:48px}

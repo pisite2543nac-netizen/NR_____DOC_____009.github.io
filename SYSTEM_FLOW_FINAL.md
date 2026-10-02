@@ -1,4 +1,4 @@
-# FINAL FLOW — CLEAN V1.5.1
+# FINAL FLOW — CLEAN V1.5.2 (Frontend UI Fix / Backend V1.5.1)
 
 `Student -> 1 Learning Group -> Many Subjects` ยังคงเป็นโครงสร้างหลัก
 

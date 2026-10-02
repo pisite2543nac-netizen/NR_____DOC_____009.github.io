@@ -1,6 +1,6 @@
-# DOC-FULL-NR FINAL CLEAN V1.5
+# DOC-FULL-NR FINAL CLEAN V1.5.2
 
-Build marker: `CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569`
+Frontend build marker: `CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569`\n\nBackend build: `CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569`
 
 V1.5 extends the V1.4 canonical academic model without creating nested student groups:
 
@@ -48,3 +48,11 @@ Legacy Attendance/QR/PWA runtime remains disabled; V1.5 Classroom Presence is a 
 
 ## V1.5.1 SCORE RUBRIC
 คะแนนรายวิชา 100 คะแนน: งาน 40 + กลางภาค 20 + ปลายภาค 20 + จิตพิสัย 20 (ส่งงานครบตรงเวลา 10 + ครูประเมิน 10)
+
+
+## V1.5.2 UI FIX
+- Fixed the Open Exam Room fullscreen checkbox card so Thai text stays horizontal and uses the full available width.
+- Prevented overlap with the one-device notice below the checkbox card.
+- Applied the same stable form-checkbox layout to registration settings.
+- Updated CSS/JS cache-busting to `v=1.5.2` so browsers load the corrected layout after deployment.
+- Backend schema/RPC behavior remains V1.5.1.

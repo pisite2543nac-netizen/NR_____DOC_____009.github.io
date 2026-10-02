@@ -1,0 +1,21 @@
+DOC-FULL-NR CLEAN V1.5.2 UI FIX
+Frontend Build: CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569
+Backend Build: CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569
+
+UI changes:
+- Added dedicated form-check-card layout.
+- Fixed Secure Exam Fullscreen checkbox text width/wrapping.
+- Fixed overlap with one-device exam notice.
+- Applied the same form checkbox layout to registration settings.
+- Updated asset cache-busting to 1.5.2.
+
+Backend:
+- No schema/RPC change.
+- Production remains on V1.5.1 score-rubric backend.
+
+Preserved:
+- Grade rubric: 40 + 20 + 20 + 20
+- Behavior split: 10 auto punctuality + 10 teacher
+- Classroom/session code
+- Worksheet presence gate
+- Secure exam + one-device + integrity events

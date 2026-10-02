@@ -1,8 +1,8 @@
 export const CONFIG = Object.freeze({
   supabaseUrl: 'https://thjscmfqunlaqxlievna.supabase.co',
   publishableKey: 'sb_publishable_ZBMlwjpRKAL1egtnj-cqsQ_Etrjh_L_',
-  version: '1.5.1',
-  build: 'CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569',
+  version: '1.5.2',
+  build: 'CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569',
   backendBuild: 'CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569',
   academicYear: '2569',
   semester: '2',

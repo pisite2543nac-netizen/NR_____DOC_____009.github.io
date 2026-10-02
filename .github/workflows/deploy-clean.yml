@@ -1,4 +1,4 @@
-name: Deploy DOC-FULL-NR FINAL CLEAN V1.5
+name: Deploy DOC-FULL-NR FINAL CLEAN V1.5.2
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
           test -f site/js/app.js
           test ! -f site/app.js
           test -d site/js/pages
-          grep -q 'CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569' site/BUILD.json
+          grep -q 'CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569' site/BUILD.json
           find site/js -name '*.js' -print0 | xargs -0 -n1 node --check
           ! grep -R "clean_attendance" site
           ! grep -R "clean_my_identity_qr" site
@@ -69,7 +69,7 @@ jobs:
           grep -R "clean_exam_start_secure" site/js/pages/exams.js
           grep -R "clean_exam_integrity_event" site/js/pages/exams.js
           grep -R "clean_exam_submit_secure" site/js/pages/exams.js
-          echo 'FINAL CLEAN V1.5 release gate PASS'
+          echo 'FINAL CLEAN V1.5.2 release gate PASS'
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -90,7 +90,7 @@ jobs:
         run: |
           set -euo pipefail
           for i in $(seq 1 45); do
-            if curl -fsSL --max-time 10 "${PAGE_URL}BUILD.json?ts=$(date +%s)" | grep -q 'CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569'; then
+            if curl -fsSL --max-time 10 "${PAGE_URL}BUILD.json?ts=$(date +%s)" | grep -q 'CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569'; then
               echo 'LIVE BUILD VERIFIED'
               exit 0
             fi

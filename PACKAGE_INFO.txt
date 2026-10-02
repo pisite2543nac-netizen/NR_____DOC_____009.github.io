@@ -1,10 +1,18 @@
-DOC-FULL-NR FINAL CLEAN V1.5.1
-Build: CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569
+DOC-FULL-NR FINAL CLEAN V1.5.2
+Frontend Build: CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569
+Backend Build: CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569
 
-Score rubric:
+V1.5.2 UI hotfix:
+- Fix Secure Exam modal checkbox text wrapping vertically.
+- Keep Thai text horizontal and full-width.
+- Prevent Fullscreen option from overlapping the one-device notice.
+- Apply the same stable checkbox-card layout to registration settings.
+- Add cache-busting for CSS/JS so the fix appears after deployment.
+
+Score rubric remains:
 - Worksheet 40
 - Midterm 20
 - Final 20
 - Behavior 20 = on-time completeness 10 + teacher judgment 10
 
-Base: CLEAN V1.5 Classroom & Secure Exam. No project replacement; compatible source update.
+No backend schema change in V1.5.2.

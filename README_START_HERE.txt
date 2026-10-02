@@ -1,36 +1,21 @@
-DOC-FULL-NR CLEAN V1.5.1
-Build: CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569
+DOC-FULL-NR CLEAN V1.5.2 — UI FIX
+Frontend Build: CLEAN-V1.5.2-EXAM-MODAL-UI-FIX-SEM2-2569
+Backend Build: CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569
 
 1) Extract ZIP.
 2) Run 00_INSTALL_UPDATE_SYSTEM.cmd
-3) Wait for [SUCCESS] FINAL CLEAN V1.5.1 IS LIVE.
-4) Confirm BUILD.json shows CLEAN-V1.5.1-SCORE-RUBRIC-40-20-20-20-SEM2-2569.
+3) Wait for [SUCCESS] FINAL CLEAN V1.5.2 IS LIVE.
+4) Reopen/refresh the website. The CSS/JS URLs are cache-busted to v=1.5.2.
 
-Core model:
-Student 1 person -> 1 learning group -> many subjects -> temporary class/exam sessions.
+Fixed in this release:
+- The “บังคับโหมดเต็มหน้าจอ” option in the Open Exam Room modal no longer collapses into a narrow vertical column.
+- The explanatory text stays horizontal, wraps naturally, and does not overlap the “อุปกรณ์เดียวต่อการสอบหนึ่งครั้ง” notice.
+- Registration-settings checkbox cards use the same stable form layout.
 
-V1.5 core:
-- Classroom rotating 6-digit code + live presence roster
-- Digital Worksheet class-presence gate to reduce remote work
-- Secure Exam room code + one-device attempt + integrity event log
-- Midterm 50 questions -> 20 points
-- Final 50 questions -> 20 points
-- Each term exam = 25 content questions + 25 very-hard analytical questions
-
-Mobile student scope:
-- Join classroom with code
-- Retrospective Paper copy submission
-Secure exams and main academic work remain Desktop/Tablet.
-
-Final hardening:
-- Correct-answer positions are not fixed; A/B/C/D IDs are diversified and options are shuffled per attempt.
-- Expired secure exams are submitted from the server every minute using the latest autosaved answers.
-- Opening an active attempt from a second device is blocked and logged for teacher review.
-
-Score rubric V1.5.1:
-- Worksheet / งาน = 40
-- Midterm / กลางภาค = 20
-- Final / ปลายภาค = 20
-- Behavior / จิตพิสัย = 20
-  - Auto: ส่งงานครบและตรงเวลาทุกชิ้น = 10
-  - Teacher judgment: ครูผู้สอนให้ 0-10 พร้อมหมายเหตุ = 10
+All V1.5/V1.5.1 functions are preserved:
+- Classroom Code + Presence Gate
+- Secure Exam + anti-cheat event log
+- 50-question midterm/final -> 20 points each
+- Score rubric 40 + 20 + 20 + 20
+- Behavior 20 = automatic punctuality 10 + teacher judgment 10
+- One student -> one learning group -> many subjects
