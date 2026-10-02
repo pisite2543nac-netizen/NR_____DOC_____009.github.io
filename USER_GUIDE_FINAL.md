@@ -1,36 +1,23 @@
-# คู่มือ DOC-FULL-NR CLEAN V1.3.6
+# USER GUIDE — CLEAN V1.4
 
-## การลงทะเบียนนักศึกษา
-1. หน้า Login เลือก `ลงทะเบียนนักศึกษา`
-2. กรอกชื่อ-สกุล ชื่อเล่น รหัสนักศึกษา วันเกิด เบอร์โทร และ Email (ถ้ามี)
-3. กด `เปิดกล้อง` จัดใบหน้าให้อยู่กึ่งกลาง แล้วกด `ถ่ายรูป`
-4. ตรวจรูป หากไม่พอใจกด `ถ่ายใหม่`
-5. เลือกระดับ ห้อง แผนก และสาขา
-6. ตั้งรหัสผ่าน และกรอก Registration Code เมื่อ Admin เปิดบังคับ
-7. ส่งคำขอ บัญชีจะเป็น Pending จนกว่า Admin อนุมัติ
+## Admin
+- Approve a student by selecting classroom, seat number and ONE learning group.
+- Do not assign each subject manually; the group controls its subject list.
+- Use **กลุ่มเรียน** for bulk assignment.
+- Use **กลุ่มย่อย/โครงงาน** only when you intentionally need project teams.
+- Assign teachers by subject + learning group.
+- Gradebook requires subject + learning group before loading scores.
 
-## Admin ตรวจคำขอ
-หน้า `ผู้ใช้` สามารถกด `รายละเอียด` เพื่อเปิดโปรไฟล์นักศึกษาแบบเต็ม เห็นรูปสมัคร ข้อมูลส่วนตัว ห้อง/เลขที่ รายวิชา Group Code สรุปการเรียน และประวัติการจัดการบัญชี
+## Teacher
+- Select subject, then learning group, then unit.
+- Present slides and open the Digital Worksheet at the end.
+- Set opening and due date/time.
+- Submitted teaching-flow work is locked for the student.
+- Gradebook only contains students/scores from the selected subject and group.
 
-ตอนอนุมัติ Admin ต้องยืนยันห้องจริง เลขที่ รายวิชา และ Group Code ของแต่ละวิชา วิชาที่มีกลุ่มเดียวเลือกลุ่มให้อัตโนมัติ ส่วนวิชาที่มีหลาย Group Code ต้องเลือกให้ชัดเจน
-
-## ครูดูโปรไฟล์นักศึกษา
-ครูเปิดโปรไฟล์ได้จากหน้าตรวจงานและรายละเอียดกลุ่มห้อง แต่ระบบอนุญาตเฉพาะนักศึกษาที่อยู่ในขอบเขตรายวิชาที่ครูได้รับมอบหมาย
-
-## นักศึกษาดูโปรไฟล์ตัวเอง
-เมนู `โปรไฟล์` แสดงรูปสมัคร ข้อมูลส่วนตัว ห้องจริง เลขที่ รายวิชา Group Code และภาพรวมใบงาน/ข้อสอบ
-
-## Flow การสอน
-รายวิชา → Group Code → หน่วย 1–17 → สไลด์ 20 หน้า → `จบสไลด์ • เปิดใบงานอิเล็กทรอนิกส์` → ตั้งเวลาเปิด/ส่ง → Publish เฉพาะ Group → นักศึกษาทำและส่ง → ครูตรวจ → Gradebook
-
-## Mobile
-โทรศัพท์ยังมีเพียง `ส่งสำเนาใบงานย้อนหลัง` สำหรับ Paper Worksheet ที่ครูเปิดรับ ไม่เปิด Attendance, QR, PWA หรือ Service Worker
-
-
-## V1.3.6 Student Submission Tracker
-- Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
-- Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
-- โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
-- หลังส่งข้อสอบไม่แสดงคะแนน แม้ Backend ตรวจอัตโนมัติ
-- คะแนนยังคงอยู่ใน Teacher/Admin Gradebook ตามเดิม
-- Registration layout hardened สำหรับ checkbox/ปุ่มบนจอ 1366/1600/มือถือ
+## Student
+- Belongs to one main learning group.
+- Subjects appear automatically from that group.
+- Desktop/tablet: study, worksheets, exams.
+- Phone: retrospective Paper copy submission only.
+- Student account shows submission status, not scores.

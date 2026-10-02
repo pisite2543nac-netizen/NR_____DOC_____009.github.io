@@ -1,44 +1,32 @@
-# DOC-FULL-NR CLEAN V1.3.6 — Backend Status
+# Backend Status — CLEAN V1.4
 
-Build: `CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569`
+Build: `CLEAN-V1.4-LEARNING-GROUP-INTEGRITY-SEM2-2569`
 
-## Verified production backend
-- Supabase project: `thjscmfqunlaqxlievna`
-- RLS: 30/30 CLEAN tables enabled
+- Clean tables: 31 / RLS enabled: 31
+- Anonymous Clean RPC executable: 0
 - Subjects: 13
-- Group Codes: 14
-- Corrected Group Code: `21910-2018` uses `ทธ.11` (old `พธ.11` removed)
-- Teaching Units: 221
+- Teaching units: 221
 - Slides: 4,420
 - Unit worksheet templates: 221
-- Unit practice exams: 221
+- Unit exam templates: 221
 - Midterm templates: 13
 - Final templates: 13
-- Attendance runtime: disabled
-- QR runtime: disabled
-- Mobile scope: retrospective Paper copy submission only
+- Canonical learning groups: 6
+- Active subject offerings without learning group: 0
+- Student multi-learning-group conflict: 0
+- Group code correction: `ทธ.11`
+- Registration camera: private storage
+- Student score visibility: disabled
+- Attendance / QR runtime: disabled
 
-## Detailed Registration V1.3.6
-Registration stores: full name, nickname, student code, birth date, phone, email, level, room label, department, major, and a live camera photo.
+## V1.4 integrity changes
 
-Registration photos are stored in the private bucket `clean-registration-photos` with a 1 MB JPEG limit. Photos are not public. Authorized profile viewing uses a short-lived signed URL.
-
-## Student Profile
-RPC: `clean_student_profile_detail(uuid)`
-- Admin: full student profile + enrollments + Group Code + learning summary + account history
-- Teacher: only students inside teaching scope; personal fields are reduced
-- Student: own full profile
-
-Profile photo URL: Edge Function `clean-registration-photo-url` (JWT required).
-
-## Acceptance
-`clean_system_acceptance()` currently reports PASS for registration camera, private photo storage, student profile detail, Group Code correction, teaching content, assessments, RLS, and disabled Attendance/QR runtime.
-
-
-## V1.3.6 Student Submission Tracker
-- Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
-- Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
-- โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
-- หลังส่งข้อสอบไม่แสดงคะแนน แม้ Backend ตรวจอัตโนมัติ
-- คะแนนยังคงอยู่ใน Teacher/Admin Gradebook ตามเดิม
-- Registration layout hardened สำหรับ checkbox/ปุ่มบนจอ 1366/1600/มือถือ
+1. Student has one canonical `learning_group_id`.
+2. One learning group maps to multiple subject offerings.
+3. Assigning a student to a group auto-enrolls all active subjects of that group.
+4. Teacher assignment is Subject + Learning Group.
+5. Teaching Digital Worksheet is scoped to the subject offering/group.
+6. Teaching-flow Digital Worksheet defaults to one locked submission (`allow_resubmit=false`, `max_attempts=1`).
+7. Gradebook now isolates worksheet scores by subject and supports group-scoped loading.
+8. Gradebook uses the latest graded attempt per worksheet instead of averaging duplicate attempts.
+9. Backup snapshot includes learning groups, offerings, teacher assignments and enrollments.

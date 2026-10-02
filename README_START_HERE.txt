@@ -1,24 +1,10 @@
-DOC-FULL-NR CLEAN V1.3.6
+DOC-FULL-NR CLEAN V1.4
+Build: CLEAN-V1.4-LEARNING-GROUP-INTEGRITY-SEM2-2569
 
-1) Extract this ZIP.
-2) Double-click 00_INSTALL_UPDATE_SYSTEM.cmd
-3) Wait until you see:
-   [SUCCESS] FINAL CLEAN V1.3.6 IS LIVE
-   Build: CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569
-4) The browser will open Production automatically.
-5) Hard refresh once if an old tab was already open.
+1) Extract ZIP.
+2) Run 00_INSTALL_UPDATE_SYSTEM.cmd
+3) Wait for [SUCCESS] FINAL CLEAN V1.4 IS LIVE.
+4) Confirm BUILD.json shows the V1.4 marker.
 
-Important:
-- Backend V1.3.6 has already been applied to Supabase.
-- Registration now requires a live camera photo.
-- Student Profile viewing is restored and expanded.
-- Group Code `พธ.11` was corrected to `ทธ.11`.
-
-
-## V1.3.6 Student Submission Tracker
-- Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
-- Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
-- โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
-- หลังส่งข้อสอบไม่แสดงคะแนน แม้ Backend ตรวจอัตโนมัติ
-- คะแนนยังคงอยู่ใน Teacher/Admin Gradebook ตามเดิม
-- Registration layout hardened สำหรับ checkbox/ปุ่มบนจอ 1366/1600/มือถือ
+Core model: Student 1 person -> 1 learning group -> many subjects.
+Subgroups are optional and do not affect normal assignment or Gradebook.

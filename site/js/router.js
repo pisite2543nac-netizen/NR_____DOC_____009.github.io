@@ -5,11 +5,11 @@ export const MENUS = Object.freeze({
   admin: [
     ['dashboard', 'แดชบอร์ด'], ['subjects', 'วิชา/ห้อง'], ['teaching', 'เนื้อหาการสอน'], ['users', 'ผู้ใช้'],
     ['assignments', 'มอบหมายครู'], ['worksheets', 'ใบงาน'], ['submissions', 'ตรวจงาน'], ['exams', 'ข้อสอบ'],
-    ['gradebook', 'คะแนน'], ['groups', 'กลุ่มห้อง'], ['diagnostics', 'ตรวจระบบ'],
+    ['gradebook', 'คะแนน'], ['groups', 'กลุ่มเรียน'], ['diagnostics', 'ตรวจระบบ'],
   ],
   teacher: [
     ['dashboard', 'แดชบอร์ด'], ['subjects', 'รายวิชา'], ['teaching', 'เนื้อหาการสอน'], ['worksheets', 'ใบงาน'],
-    ['submissions', 'ตรวจงาน'], ['exams', 'ข้อสอบ'], ['gradebook', 'คะแนน'], ['groups', 'กลุ่มห้อง'], ['diagnostics', 'ตรวจระบบ'],
+    ['submissions', 'ตรวจงาน'], ['exams', 'ข้อสอบ'], ['gradebook', 'คะแนน'], ['groups', 'กลุ่มเรียน'], ['diagnostics', 'ตรวจระบบ'],
   ],
   student: [
     ['dashboard', 'แดชบอร์ด'], ['subjects', 'วิชาของฉัน'], ['teaching', 'เนื้อหาการเรียน'], ['worksheets', 'ใบงาน'],

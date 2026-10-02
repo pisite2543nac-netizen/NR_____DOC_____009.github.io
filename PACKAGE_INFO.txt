@@ -1,24 +1,20 @@
-DOC-FULL-NR CLEAN V1.3.6 COMPLETE FULL
-Build: CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569
+DOC-FULL-NR CLEAN V1.4 COMPLETE FULL
+Build: CLEAN-V1.4-LEARNING-GROUP-INTEGRITY-SEM2-2569
 Semester: 2/2569
 
-Highlights:
-- Detailed student registration
-- Live camera photo required during registration
-- Private registration photo storage
-- Full Student Profile viewer
-- Correct Group Code: ทธ.11
-- 13 subjects / 221 units / 4,420 slides
-- 221 unit worksheets / 221 unit exams / 13 midterms / 13 finals
-- Group-scoped Digital Worksheet after teaching slides
-- Mobile remains Paper retrospective submission only
+Core model:
+- Student 1 คน = กลุ่มเรียนหลัก 1 กลุ่ม
+- กลุ่มเรียน 1 กลุ่ม = หลายรายวิชา
+- กลุ่มย่อย/กลุ่มโครงงานเป็น Optional และไม่ใช้แจกงาน/คิดคะแนน
+- Teacher Assignment = วิชา + กลุ่มเรียน
+- Digital Worksheet = วิชา + กลุ่มเรียน + หน่วย
+- Gradebook = แยกวิชา + กลุ่มเรียน
+
+Integrity improvements:
+- Bulk Assign นักศึกษาหลายคนเข้ากลุ่มเดียวและลงวิชาอัตโนมัติ
+- Submission หลังส่งถูกล็อกตามค่าเริ่มต้นของ Teaching Flow
+- Gradebook แก้การปะปนคะแนนข้ามวิชา และใช้ Attempt ล่าสุดที่ตรวจแล้วต่อใบงาน
+- Student ไม่เห็นคะแนน เห็นเฉพาะสถานะการส่ง
+- Registration camera/private photo/profile ยังคงอยู่
+- ทธ.11 ถูกต้อง
 - Attendance / QR / PWA / Service Worker disabled
-
-
-## V1.3.6 Student Submission Tracker
-- Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
-- Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
-- โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
-- หลังส่งข้อสอบไม่แสดงคะแนน แม้ Backend ตรวจอัตโนมัติ
-- คะแนนยังคงอยู่ใน Teacher/Admin Gradebook ตามเดิม
-- Registration layout hardened สำหรับ checkbox/ปุ่มบนจอ 1366/1600/มือถือ

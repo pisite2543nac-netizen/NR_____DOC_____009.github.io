@@ -59,6 +59,7 @@ export async function openStudentProfile(studentId) {
         ${value('ห้องที่แจ้ง', p.room_label)}
         ${value('แผนก', p.department)}
         ${value('สาขา', p.major)}
+        ${value('กลุ่มเรียนหลัก', p.learning_group_code || data.learning_group?.code)}
         ${value('ห้องจริงในระบบ', classroom.name || classroom.code)}
         ${value('เลขที่', classroom.seat_number)}
         ${isDetailed ? value('แหล่งลงทะเบียน', p.registration_source === 'self' ? 'สมัครด้วยตนเอง' : p.registration_source) : ''}
@@ -67,19 +68,14 @@ export async function openStudentProfile(studentId) {
       </div>
       ${p.rejection_reason ? `<div class="error-inline"><strong>เหตุผลไม่อนุมัติ:</strong> ${esc(p.rejection_reason)}</div>` : ''}
 
-      <div class="section-title"><div><span class="eyebrow">Enrollment</span><h2>รายวิชาและ Group Code</h2></div><span class="count-badge">${enrollments.length} รายวิชา</span></div>
-      ${enrollments.length ? `<div class="table-wrap"><table><thead><tr><th>รายวิชา</th><th>Group Code</th><th>ห้อง</th><th>สถานะ</th></tr></thead><tbody>${enrollments.map((e) => `<tr><td><strong>${esc(e.subject_code || '')}</strong><small>${esc(e.subject_name || '')}</small></td><td>${esc(e.group_code || '-')}<small>${e.weekly_hours ?? '-'} ชม./สัปดาห์</small></td><td>${esc(e.classroom_name || e.classroom_code || '-')}</td><td>${statusPill(e.status)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีรายวิชา</div>'}
+      <div class="section-title"><div><span class="eyebrow">Enrollment</span><h2>รายวิชาของกลุ่มเรียน</h2></div><span class="count-badge">${enrollments.length} รายวิชา</span></div>
+      ${enrollments.length ? `<div class="table-wrap"><table><thead><tr><th>รายวิชา</th><th>กลุ่มเรียน</th><th>ห้อง</th><th>สถานะ</th></tr></thead><tbody>${enrollments.map((e) => `<tr><td><strong>${esc(e.subject_code || '')}</strong><small>${esc(e.subject_name || '')}</small></td><td>${esc(e.group_code || '-')}<small>${e.weekly_hours ?? '-'} ชม./สัปดาห์</small></td><td>${esc(e.classroom_name || e.classroom_code || '-')}</td><td>${statusPill(e.status)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">ยังไม่มีรายวิชา</div>'}
 
       <div class="section-title"><div><span class="eyebrow">Learning Summary</span><h2>ภาพรวมการเรียน</h2></div></div>
       <div class="student-summary-grid">
         <div class="metric-card"><span>ใบงานที่ได้รับ</span><strong>${summary.worksheet_assigned ?? 0}</strong></div>
         <div class="metric-card"><span>ใบงานที่ส่ง</span><strong>${summary.worksheet_submitted ?? 0}</strong></div>
-        <div class="metric-card"><span>ใบงานที่ตรวจแล้ว</span><strong>${summary.worksheet_graded ?? 0}</strong></div>
-        <div class="metric-card"><span>เฉลี่ยใบงาน</span><strong>${percent(summary.worksheet_average_percent)}</strong></div>
-        <div class="metric-card"><span>ข้อสอบที่ได้รับ</span><strong>${summary.exam_assigned ?? 0}</strong></div>
-        <div class="metric-card"><span>ข้อสอบที่ทำแล้ว</span><strong>${summary.exam_attempted ?? 0}</strong></div>
-        <div class="metric-card"><span>ข้อสอบที่ตรวจแล้ว</span><strong>${summary.exam_graded ?? 0}</strong></div>
-        <div class="metric-card"><span>เฉลี่ยข้อสอบ</span><strong>${percent(summary.exam_average_percent)}</strong></div>
+        ${data.viewer_role === 'student' ? `<div class="metric-card"><span>บันทึกร่าง</span><strong>${summary.worksheet_draft ?? 0}</strong></div><div class="metric-card"><span>ยังไม่ส่ง</span><strong>${summary.worksheet_not_submitted ?? 0}</strong></div><div class="metric-card"><span>ข้อสอบที่ได้รับ</span><strong>${summary.exam_assigned ?? 0}</strong></div><div class="metric-card"><span>ข้อสอบที่ทำแล้ว</span><strong>${summary.exam_attempted ?? 0}</strong></div>` : `<div class="metric-card"><span>ใบงานที่ตรวจแล้ว</span><strong>${summary.worksheet_graded ?? 0}</strong></div><div class="metric-card"><span>เฉลี่ยใบงาน</span><strong>${percent(summary.worksheet_average_percent)}</strong></div><div class="metric-card"><span>ข้อสอบที่ได้รับ</span><strong>${summary.exam_assigned ?? 0}</strong></div><div class="metric-card"><span>ข้อสอบที่ทำแล้ว</span><strong>${summary.exam_attempted ?? 0}</strong></div><div class="metric-card"><span>ข้อสอบที่ตรวจแล้ว</span><strong>${summary.exam_graded ?? 0}</strong></div><div class="metric-card"><span>เฉลี่ยข้อสอบ</span><strong>${percent(summary.exam_average_percent)}</strong></div>`}
       </div>
 
       ${history.length ? `<div class="section-title"><div><span class="eyebrow">History</span><h2>ประวัติการจัดการบัญชี</h2></div></div><div class="profile-history">${history.map((h) => `<div><span>${fmt(h.created_at)}</span><strong>${esc(h.action || '-')}</strong><small>${esc(h.actor_name || h.actor_username || 'ระบบ')}</small></div>`).join('')}</div>` : ''}

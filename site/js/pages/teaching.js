@@ -28,7 +28,7 @@ function syncGroupSelect(subjectId) {
   const preferred = preferredOffering(subjectId);
   select.innerHTML = offerings.length
     ? offerings.map((o) => `<option value="${esc(o.id)}" ${preferred?.id === o.id ? 'selected' : ''}>${esc(o.plan_code || 'ไม่ระบุ')} • ${o.weekly_hours ?? 0} ชม./สัปดาห์ • ${o.enrolled_count ?? 0} คน</option>`).join('')
-    : '<option value="">ยังไม่มี Group Code</option>';
+    : '<option value="">ยังไม่มี กลุ่มเรียน</option>';
   currentOfferingId = select.value || null;
 }
 
@@ -38,10 +38,10 @@ export async function teachingPage() {
   const selectedSubject = subjectById(currentSubjectId);
   const studentGroup = !isStaff() ? (selectedSubject.group_code || '-') : null;
 
-  setMain(pageHead(state.profile.role === 'student' ? 'เนื้อหาการเรียน' : 'เนื้อหาการสอน', 'รายวิชา → Group Code → 17 หน่วย → 20 สไลด์ → ใบงานอิเล็กทรอนิกส์') + `
+  setMain(pageHead(state.profile.role === 'student' ? 'เนื้อหาการเรียน' : 'เนื้อหาการสอน', 'รายวิชา → กลุ่มเรียน → 17 หน่วย → 20 สไลด์ → ใบงานอิเล็กทรอนิกส์') + `
     <div class="toolbar">
       <label class="field grow"><span>รายวิชา</span><select id="teachingSubject">${options(cachedSubjects, 'id', (s) => `${s.code} ${s.name}`, currentSubjectId)}</select></label>
-      ${isStaff() ? '<label class="field"><span>Group Code</span><select id="teachingGroup"></select></label>' : `<div class="group-summary"><span>กลุ่มเรียน</span><strong>${esc(studentGroup)}</strong></div>`}
+      ${isStaff() ? '<label class="field"><span>กลุ่มเรียน</span><select id="teachingGroup"></select></label>' : `<div class="group-summary"><span>กลุ่มเรียน</span><strong>${esc(studentGroup)}</strong></div>`}
       <button class="btn primary" id="loadUnits">โหลดหน่วย</button>
     </div>
     <div id="teachingBody"></div>`);
@@ -79,7 +79,7 @@ async function loadUnits(subjectId) {
 
   body.innerHTML = `
     <div class="section-title"><div><span class="eyebrow">${esc(subject.code || '')} • กลุ่ม ${esc(groupText)}</span><h2>${esc(subject.name || '')}</h2></div><span class="count-badge">${units.length} หน่วย • ${units.length * 20} สไลด์</span></div>
-    ${isStaff() && !currentOfferingId ? '<div class="alert-banner"><strong>ยังไม่ได้เลือก Group Code</strong><span>เลือกกลุ่มก่อนเปิดใบงานอิเล็กทรอนิกส์ เพื่อป้องกันการจ่ายงานผิดกลุ่ม</span></div>' : ''}
+    ${isStaff() && !currentOfferingId ? '<div class="alert-banner"><strong>ยังไม่ได้เลือก กลุ่มเรียน</strong><span>เลือกกลุ่มก่อนเปิดใบงานอิเล็กทรอนิกส์ เพื่อป้องกันการจ่ายงานผิดกลุ่ม</span></div>' : ''}
     <div class="unit-grid">${units.map((u) => `<article class="unit-card"><div class="unit-number">${u.unit_no}</div><div class="unit-content"><h3>${esc(u.title)}</h3><p>${esc(u.summary || '')}</p><div class="meta-row"><span>${u.slide_count || 20} สไลด์</span><span>${u.worksheet_count || 0} ใบงาน</span><span>${u.exam_count || 0} แบบทดสอบ</span></div><div class="row-actions"><button class="btn primary sm" data-unit="${u.id}">เปิดหน่วย</button>${isStaff() ? `<button class="btn secondary sm" data-digital="${u.id}">เปิดใบงานอิเล็กทรอนิกส์</button>` : ''}</div></div></article>`).join('')}</div>`;
 
   document.querySelectorAll('[data-unit]').forEach((button) => button.onclick = () => showUnit(button.dataset.unit));
@@ -107,14 +107,14 @@ async function showUnit(unitId) {
 
   body.innerHTML = `
     <div class="page-actions inline"><button class="btn light" id="backUnits">← 17 หน่วย</button>${isStaff() ? '<button class="btn light" id="editUnit">แก้เนื้อหาหน่วย</button><button class="btn light" id="unitHistory">Version History</button><button class="btn primary" id="openDigital">เปิดใบงานอิเล็กทรอนิกส์</button>' : ''}<button class="btn secondary" id="presentSlides">นำเสนอ 20 สไลด์</button></div>
-    <section class="unit-hero"><span>หน่วยที่ ${u.unit_no} • Group ${esc(groupCode)}</span><h2>${esc(u.title)}</h2><p>${esc(u.summary || '')}</p></section>
+    <section class="unit-hero"><span>หน่วยที่ ${u.unit_no} • กลุ่ม ${esc(groupCode)}</span><h2>${esc(u.title)}</h2><p>${esc(u.summary || '')}</p></section>
     <div class="content-grid two">
       <section class="panel"><div class="panel-head"><h3>ผลลัพธ์การเรียนรู้</h3></div><ol class="clean-list">${arr(u.objectives).map((x) => `<li>${esc(x)}</li>`).join('')}</ol><h4>Key Concepts</h4><div class="chip-row">${arr(u.key_concepts).map((x) => `<span class="chip">${esc(x)}</span>`).join('')}</div></section>
-      <section class="panel"><div class="panel-head"><h3>ใบงานอิเล็กทรอนิกส์ประจำหน่วย</h3><span class="count-badge">${issuedForGroup.length} รอบที่เปิด</span></div><strong>${esc(template?.title || u.worksheet_title || '')}</strong><p>${esc(u.worksheet_brief || '')}</p>${issuedForGroup.length ? `<div class="assessment-list">${issuedForGroup.map((w) => `<div class="assessment-row"><div><strong>${esc(w.title)}</strong><small>${statusPill(w.status)} • ${statusPill(w.mode)} • Group ${esc(w.group_code || '-')} • ${fmt(w.open_at)} → ${fmt(w.due_at)}</small></div><button class="btn light sm" data-open-ws="${w.id}">เปิดใบงาน</button></div>`).join('')}</div>` : `<div class="empty-state">${isStaff() ? `ยังไม่เปิดใบงาน Digital ให้ Group ${esc(groupCode)}` : 'ครูยังไม่เปิดใบงานอิเล็กทรอนิกส์ในหน่วยนี้'}</div>`}${isStaff() ? '<div class="notice-card"><strong>Teaching Flow</strong><p>สอนด้วยสไลด์ให้จบ แล้วกด “จบสไลด์ • เปิดใบงานอิเล็กทรอนิกส์” เพื่อกำหนดเวลาเปิดและเวลาส่งให้ Group Code ที่เลือก</p></div>' : ''}</section>
+      <section class="panel"><div class="panel-head"><h3>ใบงานอิเล็กทรอนิกส์ประจำหน่วย</h3><span class="count-badge">${issuedForGroup.length} รอบที่เปิด</span></div><strong>${esc(template?.title || u.worksheet_title || '')}</strong><p>${esc(u.worksheet_brief || '')}</p>${issuedForGroup.length ? `<div class="assessment-list">${issuedForGroup.map((w) => `<div class="assessment-row"><div><strong>${esc(w.title)}</strong><small>${statusPill(w.status)} • ${statusPill(w.mode)} • กลุ่ม ${esc(w.group_code || '-')} • ${fmt(w.open_at)} → ${fmt(w.due_at)}</small></div><button class="btn light sm" data-open-ws="${w.id}">เปิดใบงาน</button></div>`).join('')}</div>` : `<div class="empty-state">${isStaff() ? `ยังไม่เปิดใบงาน Digital ให้ กลุ่ม ${esc(groupCode)}` : 'ครูยังไม่เปิดใบงานอิเล็กทรอนิกส์ในหน่วยนี้'}</div>`}${isStaff() ? '<div class="notice-card"><strong>Teaching Flow</strong><p>สอนด้วยสไลด์ให้จบ แล้วกด “จบสไลด์ • เปิดใบงานอิเล็กทรอนิกส์” เพื่อกำหนดเวลาเปิดและเวลาส่งให้ กลุ่มเรียน ที่เลือก</p></div>' : ''}</section>
     </div>
     <div class="content-grid two" style="margin-top:18px">
       <section class="panel"><div class="panel-head"><h3>แบบทดสอบประจำหน่วย</h3><span class="count-badge">${exams.length} ชุด</span></div>${exams.length ? `<div class="assessment-list">${exams.map((e) => `<div class="assessment-row"><div><strong>${esc(e.title)}</strong><small>${statusPill(e.status)} • ${esc(e.exam_type)} • ${e.duration_minutes ?? 30} นาที • ${e.full_score ?? 100} คะแนน</small></div>${isStaff() ? `<button class="btn light sm" data-open-exam="${e.id}">เปิดข้อสอบ</button>` : ''}</div>`).join('')}</div>` : '<div class="empty-state">ยังไม่มีแบบทดสอบที่เปิดในหน่วยนี้</div>'}</section>
-      <section class="panel"><div class="panel-head"><h3>การแยกกลุ่มเรียน</h3></div><div class="notice-card"><strong>Group Code: ${esc(groupCode)}</strong><p>ใบงาน Digital ที่เปิดจากหน้าสอนจะมอบหมายเฉพาะนักศึกษาที่ลงทะเบียนวิชานี้และถูกกำหนด Group Code ตรงกันเท่านั้น</p></div><div class="notice-card"><strong>มือถือ</strong><p>มือถือยังคงใช้เฉพาะการส่งสำเนาใบงาน Paper ย้อนหลัง ไม่ใช้ทำใบงาน Digital</p></div></section>
+      <section class="panel"><div class="panel-head"><h3>การแยกกลุ่มเรียน</h3></div><div class="notice-card"><strong>กลุ่มเรียน: ${esc(groupCode)}</strong><p>ใบงาน Digital ที่เปิดจากหน้าสอนจะมอบหมายเฉพาะนักศึกษาที่ลงทะเบียนวิชานี้และถูกกำหนด กลุ่มเรียน ตรงกันเท่านั้น</p></div><div class="notice-card"><strong>มือถือ</strong><p>มือถือยังคงใช้เฉพาะการส่งสำเนาใบงาน Paper ย้อนหลัง ไม่ใช้ทำใบงาน Digital</p></div></section>
     </div>
     <section class="panel" style="margin-top:18px"><div class="panel-head"><h3>20 สไลด์</h3><span class="count-badge">จบสไลด์ → เปิดใบงาน Digital</span></div><div class="slide-list">${slides.map((s) => `<button class="slide-row" data-slide-no="${s.no}"><span>${s.no}</span><div><strong>${esc(s.title)}</strong><small>${esc(s.body)}</small></div></button>`).join('')}</div></section>`;
 
@@ -142,7 +142,7 @@ function presentSlides(subject, unit, slides, startIndex = 0) {
     const slide = slides[index] || {};
     const area = document.querySelector('#presentation');
     const last = index >= slides.length - 1;
-    area.innerHTML = `<div class="presentation-slide"><div class="presentation-top"><span>${esc(subject.code || '')}${group?.plan_code ? ` • ${esc(group.plan_code)}` : ''}</span><span>${index + 1} / ${slides.length}</span></div><h1>${esc(slide.title || '')}</h1><p>${esc(slide.body || '')}</p>${slide.review_question ? `<div class="review-question"><strong>คำถามคิดวิเคราะห์</strong><p>${esc(slide.review_question)}</p></div>` : ''}<div class="teacher-note"><strong>Teacher Note</strong><p>${esc(slide.teacher_note || 'เชื่อมโยงตัวอย่างกับงานจริงและตรวจความเข้าใจของผู้เรียน')}</p></div>${last && isStaff() ? '<div class="notice-card"><strong>จบเนื้อหาหน่วย</strong><p>ขั้นถัดไปคือเปิดใบงานอิเล็กทรอนิกส์ให้ Group Code ที่เลือก พร้อมกำหนดวันและเวลาส่ง</p></div>' : ''}</div>`;
+    area.innerHTML = `<div class="presentation-slide"><div class="presentation-top"><span>${esc(subject.code || '')}${group?.plan_code ? ` • ${esc(group.plan_code)}` : ''}</span><span>${index + 1} / ${slides.length}</span></div><h1>${esc(slide.title || '')}</h1><p>${esc(slide.body || '')}</p>${slide.review_question ? `<div class="review-question"><strong>คำถามคิดวิเคราะห์</strong><p>${esc(slide.review_question)}</p></div>` : ''}<div class="teacher-note"><strong>Teacher Note</strong><p>${esc(slide.teacher_note || 'เชื่อมโยงตัวอย่างกับงานจริงและตรวจความเข้าใจของผู้เรียน')}</p></div>${last && isStaff() ? '<div class="notice-card"><strong>จบเนื้อหาหน่วย</strong><p>ขั้นถัดไปคือเปิดใบงานอิเล็กทรอนิกส์ให้ กลุ่มเรียน ที่เลือก พร้อมกำหนดวันและเวลาส่ง</p></div>' : ''}</div>`;
     document.querySelector('#prevSlide').disabled = index <= 0;
     const next = document.querySelector('#nextSlide');
     next.disabled = false;
@@ -176,7 +176,7 @@ async function showHistory(entityType, entityId, title) {
 
 async function issueDigitalWorksheet(unitId) {
   if (!currentOfferingId) {
-    modal({ title: 'ยังไม่ได้เลือก Group Code', hideSubmit: true, body: '<div class="error-card"><strong>กรุณากลับไปเลือก Group Code ก่อนเปิดใบงานอิเล็กทรอนิกส์</strong><p>ระบบไม่อนุญาตให้จ่ายใบงานจากหน้าสอนแบบรวมทุกกลุ่ม เพื่อป้องกันการจ่ายงานผิดกลุ่ม</p></div>' });
+    modal({ title: 'ยังไม่ได้เลือก กลุ่มเรียน', hideSubmit: true, body: '<div class="error-card"><strong>กรุณากลับไปเลือก กลุ่มเรียน ก่อนเปิดใบงานอิเล็กทรอนิกส์</strong><p>ระบบไม่อนุญาตให้จ่ายใบงานจากหน้าสอนแบบรวมทุกกลุ่ม เพื่อป้องกันการจ่ายงานผิดกลุ่ม</p></div>' });
     return;
   }
 
@@ -187,14 +187,14 @@ async function issueDigitalWorksheet(unitId) {
   const groupCode = preview.offering?.plan_code || '-';
 
   if ((preview.eligible_count ?? 0) < 1) {
-    modal({ title: `Group ${groupCode} ยังไม่มีนักศึกษา`, hideSubmit: true, body: `<div class="error-card"><strong>ไม่สามารถเปิดใบงานได้</strong><p>ยังไม่มีนักศึกษาที่ลงทะเบียนวิชา ${esc(preview.subject?.code || '')} และถูกกำหนด Group Code ${esc(groupCode)}</p><p>ให้ Admin ไปที่ ผู้ใช้ → ลงวิชา → กำหนด Group Code ก่อน</p></div>` });
+    modal({ title: `กลุ่ม ${groupCode} ยังไม่มีนักศึกษา`, hideSubmit: true, body: `<div class="error-card"><strong>ไม่สามารถเปิดใบงานได้</strong><p>ยังไม่มีนักศึกษาที่ลงทะเบียนวิชา ${esc(preview.subject?.code || '')} และถูกกำหนด กลุ่มเรียน ${esc(groupCode)}</p><p>ให้ Admin ไปที่ ผู้ใช้ → ลงวิชา → กำหนด กลุ่มเรียน ก่อน</p></div>` });
     return;
   }
 
   modal({ title: `เปิดใบงานอิเล็กทรอนิกส์ • ${groupCode}`, wide: true, body: `
-    <div class="confirm-summary"><div><span>หน่วย</span><strong>${preview.unit?.unit_no ?? '-'} • ${esc(preview.unit?.title || '')}</strong></div><div><span>รายวิชา</span><strong>${esc(preview.subject?.code || '')} ${esc(preview.subject?.name || '')}</strong></div><div><span>Group Code</span><strong>${esc(groupCode)}</strong></div><div><span>ผู้ได้รับงาน</span><strong>${preview.eligible_count ?? 0} คน</strong></div><div><span>คำถาม</span><strong>${preview.template?.question_count ?? 0} ข้อ</strong></div></div>
+    <div class="confirm-summary"><div><span>หน่วย</span><strong>${preview.unit?.unit_no ?? '-'} • ${esc(preview.unit?.title || '')}</strong></div><div><span>รายวิชา</span><strong>${esc(preview.subject?.code || '')} ${esc(preview.subject?.name || '')}</strong></div><div><span>กลุ่มเรียน</span><strong>${esc(groupCode)}</strong></div><div><span>ผู้ได้รับงาน</span><strong>${preview.eligible_count ?? 0} คน</strong></div><div><span>คำถาม</span><strong>${preview.template?.question_count ?? 0} ข้อ</strong></div></div>
     <div class="student-preview">${students.slice(0, 40).map((s) => `<span>${esc(s.student_code || '')} ${esc(s.full_name || '')}</span>`).join('')}${students.length > 40 ? `<strong>และอีก ${students.length - 40} คน</strong>` : ''}</div>
-    <div class="notice-card"><strong>Digital Worksheet</strong><p>หลังยืนยัน ระบบจะ Publish ใบงานดิจิทัลทันทีให้เฉพาะ Group ${esc(groupCode)} นักศึกษาสามารถบันทึกร่างและส่งงานผ่านคอม/แท็บเล็ตได้</p></div>
+    <div class="notice-card"><strong>Digital Worksheet</strong><p>หลังยืนยัน ระบบจะ Publish ใบงานดิจิทัลทันทีให้เฉพาะ กลุ่ม ${esc(groupCode)} นักศึกษาสามารถบันทึกร่างและส่งงานผ่านคอม/แท็บเล็ตได้</p></div>
     <div class="form-grid"><label class="field"><span>วัน/เวลาเปิด</span><input name="open" type="datetime-local" value="${dateInput(now)}" required></label><label class="field"><span>วัน/เวลาส่ง</span><input name="due" type="datetime-local" value="${dateInput(due)}" required></label></div>`,
     submitLabel: 'เปิดใบงานอิเล็กทรอนิกส์',
     onSubmit: async (form) => {
@@ -204,7 +204,7 @@ async function issueDigitalWorksheet(unitId) {
         p_open_at: new Date(form.get('open')).toISOString(),
         p_due_at: new Date(form.get('due')).toISOString(),
       });
-      toast(`เปิดใบงานให้ Group ${result.group?.plan_code || groupCode} แล้ว ${result.assigned_count ?? 0} คน`, 'ok');
+      toast(`เปิดใบงานให้ กลุ่ม ${result.group?.plan_code || groupCode} แล้ว ${result.assigned_count ?? 0} คน`, 'ok');
       await showUnit(unitId);
     },
   });

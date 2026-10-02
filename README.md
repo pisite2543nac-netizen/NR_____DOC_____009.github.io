@@ -1,12 +1,12 @@
-# DOC-FULL-NR FINAL CLEAN V1.3.6
+# DOC-FULL-NR FINAL CLEAN V1.4
 
 Production frontend rebuilt from scratch as ES modules.
 
-Build marker: `CLEAN-V1.3.6-REGISTER-LAYOUT-FIX-SEM2-2569`
+Build marker: `CLEAN-V1.4-LEARNING-GROUP-INTEGRITY-SEM2-2569`
 
 Desktop/Tablet: full academic workflow. Student Mobile: retrospective Paper worksheet submission only. Attendance, QR, PWA and Service Worker runtime are not part of the application.
 
-## V1.3.6 — Registration Camera + Student Profile
+## V1.4 — Registration Camera + Student Profile
 
 Detailed Registration keeps the useful detail of the legacy system and restores the live registration camera without restoring legacy QR/scanner runtime.
 
@@ -29,7 +29,7 @@ Student Profile includes private registration photo, student/academic data, actu
 Group Code correction: `ทธ.11` is the valid code for subject `21910-2018`; the old `พธ.11` value was removed.
 
 
-## V1.3.6 Student Submission Tracker
+## V1.4 Student Submission Tracker
 - Student ไม่เห็นเมนูคะแนนหรือคะแนนรายวิชา
 - Dashboard นักศึกษาแสดงเฉพาะสถานะใบงาน: ยังไม่ส่ง / บันทึกร่าง / ส่งแล้ว / ตรวจแล้ว
 - โปรไฟล์นักศึกษาไม่แสดงคะแนนเฉลี่ย
